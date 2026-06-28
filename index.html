@@ -61,7 +61,7 @@
                     <i data-lucide="shield-check" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-slate-900 leading-tight text-base">ประกันคุณภาพ QA</h1>
+                    <h1 class="font-bold text-slate-900 leading-tight text-base">ระบบประกันคุณภาพ</h1>
                     <span class="text-xs text-slate-400">โรงเรียนทนาพรวิทยา</span>
                 </div>
             </div>
@@ -71,7 +71,7 @@
                     G
                 </div>
                 <div class="truncate">
-                    <p class="text-sm font-medium text-slate-800 truncate" id="user-fullname">ผู้เยี่ยมชมระบบ</p>
+                    <p class="text-sm font-medium text-slate-800 truncate" id="user-fullname">ผู้เยี่ยมชมทั่วไป</p>
                     <span class="text-xs text-slate-400 capitalize" id="user-role-badge">Guest</span>
                 </div>
             </div>
@@ -137,7 +137,7 @@
         // โครงสร้างระบบประกันคุณภาพโรงเรียนทนาพรวิทยา
         const modulesStructure = {
             part1: {
-                title: "ส่วนที่ 1 มาตรฐานที่ 1 ผลลัพธ์ของการเรียนรู้",
+                title: "มาตรฐานที่ 1 ผลลัพธ์ของการเรียนรู้",
                 indicators: {
                     "ตัวชี้วัดที่ 1.1 ผู้เรียนมีสมรรถนะตามหลักสูตรสถานศึกษา": [
                         "ผลการอ่าน การเขียน การสื่อสาร ภาษาไทยและภาษาต่างประเทศ",
@@ -174,7 +174,7 @@
                 }
             },
             part2: {
-                title: "ส่วนที่ 2 มาตรฐานที่ 2 การพัฒนาคุณภาพการบริหารจัดการสถานศึกษา",
+                title: "มาตรฐานที่ 2 การพัฒนาคุณภาพการบริหารจัดการสถานศึกษา",
                 indicators: {
                     "ตัวชี้วัดที่ 2.1 วิสัยทัศน์ พันธกิจ และค่านิยมของสถานศึกษา": ["แผนพัฒนาคุณภาพการศึกษา", "แผนปฏิบัติการประจำปี", "มาตรฐานการศึกษาและค่าเป้าหมายของสถานศึกษา", "คำสั่งที่เกี่ยวข้อง", "รายงานการประชุมคณะกรรมการบริหารโรงเรียน", "รายงานการประชุมของสถานศึกษาที่เกี่ยวข้อง", "โครงการ กิจกรรมที่เกี่ยวข้อง", "อัลบั้มภาพและคลิปวิดีโอที่เกี่ยวข้อง"],
                     "ตัวชี้วัดที่ 2.2 นโยบาย ทิศทาง กลยุทธ์และแผนงานสอดคล้องกับวิสัยทัศน์และพันธกิจ": ["แผนพัฒนาคุณภาพการศึกษา", "แผนปฏิบัติการประจำปี", "รายงานการประชุมคณะกรรมการบริหารโรงเรียน", "รายงานการประชุมของสถานศึกษาที่เกี่ยวข้อง", "สรุปผลการดำเนินงานตามแผนงาน โครงการ กิจกรรม", "รายงานสรุปผลการดำเนินงานตามแผนพัฒนาการจัดการศึกษา", "รายงานสรุปผลการดำเนินงานระบบประกันคุณภาพภายในโรงเรียน", "โครงการ กิจกรรมที่เกี่ยวข้อง", "อัลบั้มภาพและคลิปวิดีโอที่เกี่ยวข้อง"],
@@ -189,7 +189,7 @@
                 }
             },
             part3: {
-                title: "ส่วนที่ 3 มาตรฐานที่ 3 การพัฒนาคุณภาพการจัดการเรียนรู้",
+                title: "มาตรฐานที่ 3 การพัฒนาคุณภาพการจัดการเรียนรู้",
                 indicators: {
                     "ตัวชี้วัดที่ 3.1 การออกแบบหลักสูตรและแผนการจัดการเรียนรู้ที่เสริมสร้างสมรรถนะและคุณลักษณะที่พึงประสงค์": ["หลักสูตรสถานศึกษา", "แผนการจัดการเรียนรู้และบันทึกหลังการสอน", "แบบประเมินหลักสูตร และ การประเมินแผนการจัดการเรียนรู้", "รายงานการประชุมคณะกรรมการบริหารโรงเรียน", "รายงานการประชุมที่เกี่ยวข้องของสถานศึกษา", "ระบบสารสนเทศในการติดตามผลผู้จบหลักสูตร", "โครงการ กิจกรรมที่เกี่ยวข้อง", "อัลบั้มภาพและคลิปวิดีโอที่เกี่ยวข้อง"],
                     "ตัวชี้วัดที่ 3.2 การจัดกิจกรรมการเรียนรู้ที่เสริมสร้างสมรรถนะและคุณลักษณะที่พึงประสงค์": ["หลักสูตรของสถานศึกษา", "แผนการจัดการเรียนรู้และบันทึกหลังการสอน", "สรุปผลการประเมินสมรรถนะและคุณลักษณะที่พึงประสงค์", "ระบบข้อมูลสารสนเทศที่เกี่ยวข้องกับสมรรถนะและคุณลักษณะที่พึงประสงค์ของผู้เรียน", "โครงการ กิจกรรมที่เกี่ยวข้อง", "อัลบั้มภาพและคลิปวิดีโอที่เกี่ยวข้อง"],
@@ -197,7 +197,7 @@
                 }
             },
             part4: {
-                title: "ส่วนที่ 4 เอกสารสำคัญ และหลักฐานอื่นๆ",
+                title: "เอกสารสำคัญ และหลักฐานอื่นๆ",
                 indicators: {
                     "เอกสารสำคัญ": [
                         "แผนพัฒนาคุณภาพการจัดการศึกษา", "แผนปฏิบัติการประจําปี", "หลักสูตรสถานศึกษา และรายงานผลการประเมินการใช้หลักสูตร", 
@@ -273,7 +273,7 @@
                 document.getElementById('sidebar').classList.remove('hidden');
                 mNav.classList.remove('hidden');
             } else {
-                document.getElementById('user-fullname').innerText = "ผู้เยี่ยมชมระบบ";
+                document.getElementById('user-fullname').innerText = "ผู้เยี่ยมชมทั่วไป";
                 document.getElementById('user-role-badge').innerText = "Guest";
                 document.getElementById('user-avatar').innerText = "G";
                 document.getElementById('mobile-user-tag').innerText = "GUEST";
@@ -286,9 +286,9 @@
             // เมนูทั้งหมดสำหรับแสดงในส่วนงาน
             const coreMenus = [
                 { id: 'dashboard', label: 'แดชบอร์ดสรุปงาน', icon: 'pie-chart' },
-                { id: 'part1', label: 'มฐ.1 ผลลัพธ์เรียนรู้', icon: 'graduation-cap' },
-                { id: 'part2', label: 'มฐ.2 การบริหารจัดการ', icon: 'building' },
-                { id: 'part3', label: 'มฐ.3 การจัดการเรียนรู้', icon: 'book-open' },
+                { id: 'part1', label: 'มาตรฐานที่ 1', icon: 'graduation-cap' },
+                { id: 'part2', label: 'มาตรฐานที่ 2', icon: 'building' },
+                { id: 'part3', label: 'มาตรฐานที่ 3', icon: 'book-open' },
                 { id: 'part4', label: 'เอกสารสำคัญอื่นๆ', icon: 'folder-heart' }
             ];
 
@@ -443,16 +443,22 @@
             document.getElementById('content-area').innerHTML = `
                 <div class="max-w-5xl mx-auto py-8 px-4 flex flex-col items-center text-center fade-in">
                     <div class="glass-hero p-8 rounded-3xl shadow-xl w-full max-w-3xl mb-12 border border-slate-200/60 bg-white/60">
-                        <span class="bg-indigo-50 text-indigo-700 text-xs px-3 py-1.5 rounded-full font-semibold uppercase tracking-wider">ระบบสำหรับจัดเก็บข้อมูลและประเมินผล</span>
+                        <span class="bg-indigo-50 text-indigo-700 text-xs px-3 py-1.5 rounded-full font-semibold uppercase tracking-wider">สารสนเทศเพื่อการวิเคราะห์และพัฒนาคุณภาพการจัดการศึกษา</span>
                         <h2 class="text-2xl md:text-4xl font-bold text-slate-950 mt-4 tracking-tight leading-tight">
                             ระบบประกันคุณภาพการศึกษา<br><span class="text-indigo-600">โรงเรียนทนาพรวิทยา</span>
                         </h2>
                         <p class="text-sm md:text-base text-slate-500 mt-4 max-w-xl mx-auto leading-relaxed">
-                            แพลตฟอร์มสารสนเทศสำหรับจัดเก็บไฟล์หลักฐาน ร่องรอยตัวชี้วัด ของการประเมินคุณภาพภายนอก เพื่อการวิเคราะห์และวางแผนพัฒนาคุณภาพการจัดการศึกษาขั้นพื้นฐานอย่างมีระบบ
+                            รหัสสถานศึกษา 1120100047
+                        </p>
+						                        <p class="text-sm md:text-base text-slate-500 mt-4 max-w-xl mx-auto leading-relaxed">
+                            โรงเรียนทนาพรวิทยา ตำบลบางละมุง อำเภอบางละมุง จังหวัดชลบุรี
+                        </p>
+						                        <p class="text-sm md:text-base text-slate-500 mt-4 max-w-xl mx-auto leading-relaxed">
+                            สังกัดสำนักงานคณะกรรมการส่งเสริมการศึกษาเอกชน
                         </p>
                         <div class="mt-8 flex justify-center">
                             <button onclick="renderLoginPage()" class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-lg shadow-indigo-100 hover:shadow-indigo-200 transform hover:-translate-y-0.5 transition font-semibold text-sm md:text-base flex items-center gap-2">
-                                <i data-lucide="log-in" class="w-5 h-5"></i> เข้าสู่ระบบใช้งานภายใน
+                                <i data-lucide="log-in" class="w-5 h-5"></i> เข้าสู่ระบบ
                             </button>
                         </div>
                     </div>
@@ -477,6 +483,10 @@
                             </div>
                         </div>
                     </div>
+					
+						<footer class="text-center py-4 text-xs text-slate-400">
+							© 2026 โรงเรียนทนาพรวิทยา. ระบบสารสนเทศเพื่อการประกันคุณภาพการศึกษา
+						</footer>					
                 </div>
             `;
             lucide.createIcons();
@@ -599,19 +609,19 @@
                             <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1"><i data-lucide="clipboard-list" class="w-4 h-4 text-indigo-600"></i> สรุปภารกิจตามแผนพัฒนาคุณภาพ</h3>
                             <div class="space-y-3 text-xs">
                                 <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center">
-                                    <span class="font-medium text-slate-700">มาตรฐานที่ 1 (ผลลัพธ์ผู้เรียน)</span>
+                                    <span class="font-medium text-slate-700">มาตรฐานที่ 1 ผลลัพธ์ของการเรียนรู้</span>
                                     <span class="bg-indigo-100 text-indigo-700 font-bold px-2.5 py-0.5 rounded-full">${partStats.part1} รายการ</span>
                                 </div>
                                 <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center">
-                                    <span class="font-medium text-slate-700">มาตรฐานที่ 2 (การบริหารจัดการ)</span>
+                                    <span class="font-medium text-slate-700">มาตรฐานที่ 2 การพัฒนาคุณภาพการบริหารจัดการสถานศึกษา</span>
                                     <span class="bg-indigo-100 text-indigo-700 font-bold px-2.5 py-0.5 rounded-full">${partStats.part2} รายการ</span>
                                 </div>
                                 <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center">
-                                    <span class="font-medium text-slate-700">มาตรฐานที่ 3 (การจัดการเรียนรู้)</span>
+                                    <span class="font-medium text-slate-700">มาตรฐานที่ 3 การพัฒนาคุณภาพการจัดการเรียนรู้</span>
                                     <span class="bg-indigo-100 text-indigo-700 font-bold px-2.5 py-0.5 rounded-full">${partStats.part3} รายการ</span>
                                 </div>
                                 <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center">
-                                    <span class="font-medium text-slate-700">ส่วนที่ 4 (เอกสารสำคัญอื่นๆ)</span>
+                                    <span class="font-medium text-slate-700">เอกสารสำคัญ และหลักฐานอื่นๆ</span>
                                     <span class="bg-indigo-100 text-indigo-700 font-bold px-2.5 py-0.5 rounded-full">${partStats.part4} รายการ</span>
                                 </div>
                             </div>
