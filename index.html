@@ -78,8 +78,8 @@
             <div class="p-6 border-b border-slate-800 flex items-center gap-3 bg-slate-950/40 backdrop-blur-sm">
                 <img src="logo.png" alt="โลโก้โรงเรียนทนาพรวิทยา" class="w-10 h-10 object-contain rounded-xl shadow-sm" onerror="this.onerror=null; this.src='https://placehold.co/40x40?text=TN';">
                 <div>
-                    <h1 class="font-bold text-white leading-tight text-base">ประกันคุณภาพ QA</h1>
-                    <span class="text-xs text-blue-400 font-medium">รร.ทนาพรวิทยา</span>
+                    <h1 class="font-bold text-white leading-tight text-base">ระบบประกันคุณภาพ</h1>
+                    <span class="text-xs text-blue-400 font-medium">โรงเรียนทนาพรวิทยา</span>
                 </div>
             </div>
             
@@ -115,7 +115,7 @@
 
             <footer class="w-full py-4 px-6 border-t border-white/10 bg-slate-950/20 text-center relative z-10">
                 <p class="text-[11px] md:text-xs text-blue-200/50 font-medium tracking-wide">
-                    © 2026 โรงเรียนทนาพรวิทยา. ระบบสารสนเทศเพื่อการประกันคุณภาพการศึกษา
+                    © 2026 โรงเรียนทนาพรวิทยา. ระบบสารสนเทศเพื่อการประกันคุณภาพการศึกษา พัฒนาโดย นายเจษฎากร เชิดฉาย
                 </p>
             </footer>
         </main>
@@ -145,9 +145,10 @@
         let evidenceDataCache = [];
         let dashboardChartInstance = null;
 
+        // ปรับเปลี่ยนโครงสร้าง Title เมนูหลังบ้านตามชื่อใหม่
         const modulesStructure = {
             part1: {
-                title: "ส่วนที่ 1 มาตรฐานที่ 1 ผลลัพธ์ของการเรียนรู้",
+                title: "ส่วนที่ 1 มาตรฐานที่ 1",
                 indicators: {
                     "ตัวชี้วัดที่ 1.1 ผู้เรียนมีสมรรถนะตามหลักสูตรสถานศึกษา": [
                         "ผลการอ่าน การเขียน การสื่อสาร ภาษาไทยและภาษาต่างประเทศ", "ผลการคิดคำนวณและทักษะกระบวนการทางคณิตศาสตร์",
@@ -171,7 +172,7 @@
                 }
             },
             part2: {
-                title: "ส่วนที่ 2 มาตรฐานที่ 2 การพัฒนาคุณภาพการบริหารจัดการสถานศึกษา",
+                title: "ส่วนที่ 2 มาตรฐานที่ 2",
                 indicators: {
                     "ตัวชี้วัดที่ 2.1 วิสัยทัศน์ พันธกิจ และค่านิยมของสถานศึกษา": ["แผนพัฒนาคุณภาพการศึกษา", "แผนปฏิบัติการประจำปี", "มาตรฐานการศึกษาและค่าเป้าหมายของสถานศึกษา", "คำสั่งที่เกี่ยวข้อง", "รายงานการประชุมคณะกรรมการบริหารโรงเรียน", "โครงการ กิจกรรมที่เกี่ยวข้อง", "อัลบั้มภาพและคลิปวิดีโอที่เกี่ยวข้อง"],
                     "ตัวชี้วัดที่ 2.2 นโยบาย ทิศทาง กลยุทธ์และแผนงานสอดคล้องกับวิสัยทัศน์และพันธกิจ": ["แผนพัฒนาคุณภาพการศึกษา", "แผนปฏิบัติการประจำปี", "รายงานสรุปผลการดำเนินงานระบบประกันคุณภาพภายในโรงเรียน", "โครงการ กิจกรรมที่เกี่ยวข้อง", "อัลบั้มภาพและคลิปวิดีโอที่เกี่ยวข้อง"],
@@ -186,7 +187,7 @@
                 }
             },
             part3: {
-                title: "ส่วนที่ 3 มาตรฐานที่ 3 การพัฒนาคุณภาพการจัดการเรียนรู้",
+                title: "ส่วนที่ 3 มาตรฐานที่ 3",
                 indicators: {
                     "ตัวชี้วัดที่ 3.1 การออกแบบหลักสูตรและแผนการจัดการเรียนรู้ที่เสริมสร้างสมรรถนะและคุณลักษณะที่พึงประสงค์": ["หลักสูตรสถานศึกษา", "แผนการจัดการเรียนรู้และบันทึกหลังการสอน", "แบบประเมินหลักสูตร และ การประเมินแผนการจัดการเรียนรู้", "โครงการ กิจกรรมที่เกี่ยวข้อง", "อัลบั้มภาพและคลิปวิดีโอที่เกี่ยวข้อง"],
                     "ตัวชี้วัดที่ 3.2 การจัดกิจกรรมการเรียนรู้ที่เสริมสร้างสมรรถนะและคุณลักษณะที่พึงประสงค์": ["หลักสูตรของสถานศึกษา", "แผนการจัดการเรียนรู้และบันทึกหลังการสอน", "สรุปผลการประเมินสมรรถนะและคุณลักษณะที่พึงประสงค์", "โครงการ กิจกรรมที่เกี่ยวข้อง", "อัลบั้มภาพและคลิปวิดีโอที่เกี่ยวข้อง"],
@@ -288,7 +289,6 @@
                 
                 document.getElementById('user-fullname').innerText = currentUser.name;
                 
-                // แสดงตำแหน่งของผู้ใช้ตามบทบาท
                 if (currentUser.role === 'admin') {
                     document.getElementById('user-role-badge').innerText = 'ผู้ดูแลระบบ (Admin)';
                 } else if (currentUser.role === 'guest') {
@@ -311,11 +311,12 @@
                 return;
             }
 
+            // แก้ไขข้อความป้ายเมนูนำทางตามที่กำหนด
             const coreMenus = [
-                { id: 'dashboard', label: 'แดชบอร์ดสรุปงาน', icon: 'pie-chart' },
-                { id: 'part1', label: 'มฐ.1 ผลลัพธ์เรียนรู้', icon: 'graduation-cap' },
-                { id: 'part2', label: 'มฐ.2 การบริหารจัดการ', icon: 'building' },
-                { id: 'part3', label: 'มฐ.3 การจัดการเรียนรู้', icon: 'book-open' },
+                { id: 'dashboard', label: 'แดชบอร์ดสรุปข้อมูล', icon: 'pie-chart' },
+                { id: 'part1', label: 'มาตรฐานที่ 1', icon: 'graduation-cap' },
+                { id: 'part2', label: 'มาตรฐานที่ 2', icon: 'building' },
+                { id: 'part3', label: 'มาตรฐานที่ 3', icon: 'book-open' },
                 { id: 'part4', label: 'เอกสารสำคัญอื่นๆ', icon: 'folder-heart' }
             ];
 
@@ -333,7 +334,7 @@
 
             // Mobile Bottom Menu Generator
             let mHtml = '';
-            const mobileVisibleMenus = coreMenus.slice(0, 3); 
+            const mobileVisibleMenus = coreMenus.slice(0, 4); // แสดง มาตรฐาน 1-3 และ แดชบอร์ดในแถบล่าง
             mobileVisibleMenus.forEach(m => {
                 const activeCls = currentView === m.id ? 'text-indigo-400 font-medium' : 'text-slate-500';
                 mHtml += `<button onclick="navigateTo('${m.id}')" class="flex flex-col items-center justify-center py-1 flex-1 ${activeCls}">
@@ -360,13 +361,10 @@
                 </button>`;
                 pGrid.innerHTML = gridHtml;
             } else {
-                coreMenus.slice(3).forEach(m => {
-                    const activeCls = currentView === m.id ? 'text-indigo-400 font-medium' : 'text-slate-500';
-                    mHtml += `<button onclick="navigateTo('${m.id}')" class="flex flex-col items-center justify-center py-1 flex-1 ${activeCls}">
-                        <i data-lucide="${m.icon}" class="w-5 h-5"></i>
-                        <span class="text-[10px] mt-0.5">${m.label.split(' ')[0]}</span>
-                    </button>`;
-                });
+                mHtml += `<button onclick="navigateTo('part4')" class="flex flex-col items-center justify-center py-1 flex-1 ${currentView === 'part4' ? 'text-indigo-400' : 'text-slate-500'}">
+                    <i data-lucide="folder-heart" class="w-5 h-5"></i>
+                    <span class="text-[10px] mt-0.5">เอกสาร</span>
+                </button>`;
                 mHtml += `<button onclick="triggerLogout()" class="flex flex-col items-center justify-center py-1 flex-1 text-red-400">
                     <i data-lucide="log-out" class="w-5 h-5"></i>
                     <span class="text-[10px] mt-0.5">ออก</span>
@@ -453,14 +451,15 @@
         function renderLandingPage() {
             document.getElementById('content-area').innerHTML = `
                 <div class="max-w-4xl mx-auto py-8 md:py-16 px-4 flex flex-col items-center text-center relative z-10 fade-in">
-                    <div class="mb-8 flex justify-center w-full relative">
-                        <div class="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full w-32 h-32 mx-auto"></div>
-                        <img src="logo.png" alt="โลโก้โรงเรียนทนาพรวิทยา" 
-                             class="w-32 h-32 md:w-36 md:h-36 object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.3)] transition-transform duration-500 hover:scale-110 relative z-10"
-                             onerror="this.onerror=null; this.src='https://placehold.co/150x150?text=TN+LOGO';">
-                    </div>
-
                     <div class="glass-hero p-8 md:p-12 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] w-full border border-white/20 bg-slate-900/40 backdrop-blur-xl">
+                        
+                        <div class="mb-6 flex justify-center w-full relative">
+                            <div class="absolute inset-0 bg-blue-500/10 blur-xl rounded-full w-24 h-24 mx-auto"></div>
+                            <img src="logo.png" alt="โลโก้โรงเรียนทนาพรวิทยา" 
+                                 class="w-24 h-24 md:w-28 md:h-28 object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)] transition-transform duration-500 hover:scale-110 relative z-10"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/150x150?text=TN+LOGO';">
+                        </div>
+
                         <div class="mb-4">
                             <span class="bg-blue-500/20 text-blue-300 border border-blue-400/30 text-[11px] md:text-xs px-4 py-1.5 rounded-full font-medium tracking-wider uppercase">
                                 Educational Quality Assurance System
@@ -746,11 +745,12 @@
                 </div>
             `;
 
+            // แก้ไขข้อความคำโปรยหัวรองใต้บาร์แดชบอร์ดตามที่แจ้ง
             document.getElementById('content-area').innerHTML = `
                 <div class="space-y-6 fade-in">
                     <div>
                         <h2 class="text-xl md:text-2xl font-bold text-white tracking-tight">ระบบวิเคราะห์แดชบอร์ดข้อมูล (Executive Dashboard)</h2>
-                        <p class="text-xs text-slate-400 mt-1">สารสนเทศจำนวนแฟ้มร่องรอยหลักฐานประกันคุณภาพแยกตามกรอบการประเมินภายนอก</p>
+                        <p class="text-xs text-slate-400 mt-1">แพลตฟอร์มสารสนเทศสำหรับจัดเก็บข้อมูล หลักฐาน ร่องรอย ตามมาตรฐานและตัวชี้วัดของการประเมินคุณภาพภายนอก (สมศ.)</p>
                     </div>
 
                     <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
@@ -792,16 +792,16 @@
                             <h3 class="text-sm font-bold text-slate-200 flex items-center gap-1"><i data-lucide="clipboard-list" class="w-4 h-4 text-indigo-400"></i> ปริมาณร่องรอยที่จัดเก็บแล้ว</h3>
                             <div class="space-y-3 text-xs">
                                 <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
-                                    <span class="font-medium text-slate-300">มาตรฐานที่ 1 (ผลลัพธ์ผู้เรียน)</span>
+                                    <span class="font-medium text-slate-300">มาตรฐานที่ 1</span>
                                     <span class="bg-indigo-950 text-indigo-300 font-bold px-2.5 py-0.5 rounded-full">${partStats.part1} รายการ</span>
                                 </div>
                                 <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
-                                    <span class="font-medium text-slate-300">มาตรฐานที่ 2 (การบริหารจัดการ)</span>
+                                    <span class="font-medium text-slate-300">มาตรฐานที่ 2</span>
                                     <span class="bg-indigo-950 text-indigo-300 font-bold px-2.5 py-0.5 rounded-full">${partStats.part2} รายการ</span>
                                 </div>
                                 <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
-                                    <span class="font-medium text-slate-300">มาตรฐานที่ 3 (การจัดการเรียนรู้)</span>
-                                    <span class="bg-indigo-950 text-indigo-300 font-bold px-2.5 py-0.5 rounded-full">${partStats.part3} รายการ</span>
+                                    <span class="font-medium text-slate-300">มาตรฐานที่ 3</span>
+                                    <span class="bg-indigo-950 text-indigo-300 font-bold px-2.5 py-0.5 rounded-full">${partStats.part3} ราย长</span>
                                 </div>
                                 <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
                                     <span class="font-medium text-slate-300">ส่วนที่ 4 (เอกสารสำคัญอื่นๆ)</span>
