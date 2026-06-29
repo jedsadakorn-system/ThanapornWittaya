@@ -13,63 +13,88 @@
     
     <style>
         body { font-family: 'Kanit', sans-serif; }
-        .glass-hero {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+        
+        /* สไตล์ไล่เฉดสีเนียนนุ่มโทนน้ำเงินคราม */
+        .bg-mesh {
+            background-color: #0f172a; 
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.6) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(79, 70, 229, 0.4) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.3) 0px, transparent 50%);
         }
+        
+        /* วงกลมเรืองแสงเบลอหลังฉาก */
+        .blur-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.35;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* เอฟเฟกต์การ์ดกระจกฝ้า */
+        .glass-hero {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
         .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         .slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-mesh text-slate-100 min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <div class="blur-blob w-96 h-96 bg-blue-400 top-10 left-[-10%] animate-pulse" style="animation-duration: 8s;"></div>
+    <div class="blur-blob w-[500px] h-[500px] bg-indigo-500 bottom-10 right-[-10%] animate-pulse" style="animation-duration: 12s;"></div>
 
     <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2"></div>
 
-    <div id="global-loader" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div id="global-loader" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
         <div class="flex flex-col items-center">
-            <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-            <p class="mt-4 text-sm font-medium text-indigo-700" id="loader-text">กำลังประมวลผลข้อมูล...</p>
+            <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            <p class="mt-4 text-sm font-medium text-indigo-400" id="loader-text">กำลังประมวลผลข้อมูล...</p>
         </div>
     </div>
 
-    <div id="confirm-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl slide-up">
-            <h3 class="text-lg font-semibold text-slate-900" id="confirm-title">ยืนยันการดำเนินการ</h3>
-            <p class="text-sm text-slate-500 mt-2" id="confirm-desc">คุณแน่ใจหรือไม่ที่จะดำเนินรายการนี้ต่อไป?</p>
+    <div id="confirm-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl slide-up">
+            <h3 class="text-lg font-semibold text-white" id="confirm-title">ยืนยันการดำเนินการ</h3>
+            <p class="text-sm text-slate-400 mt-2" id="confirm-desc">คุณแน่ใจหรือไม่ที่จะดำเนินรายการนี้ต่อไป?</p>
             <div class="mt-6 flex justify-end gap-3">
-                <button onclick="closeConfirmModal()" class="px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">ยกเลิก</button>
+                <button onclick="closeConfirmModal()" class="px-4 py-2 text-sm font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 rounded-xl transition">ยกเลิก</button>
                 <button id="confirm-btn-action" class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-xl transition">ตกลง</button>
             </div>
         </div>
     </div>
 
-    <div id="app-root" class="w-full flex-1 flex flex-col">
+    <div id="app-root" class="w-full flex-1 flex flex-col relative z-10">
         
-        <aside id="sidebar" class="hidden w-72 bg-blue-50/80 border-r border-blue-200/60 h-screen sticky top-0 flex-shrink-0 z-30 flex-col">
-            <div class="p-6 border-b border-blue-100/40 flex items-center gap-3 bg-white/40 backdrop-blur-sm">
+        <aside id="sidebar" class="hidden w-72 bg-slate-900/60 border-r border-slate-800 h-screen sticky top-0 flex-shrink-0 z-30 flex-col">
+            <div class="p-6 border-b border-slate-800 flex items-center gap-3 bg-slate-950/40 backdrop-blur-sm">
                 <img src="logo.png" alt="โลโก้โรงเรียนทนาพรวิทยา" class="w-10 h-10 object-contain rounded-xl shadow-sm" onerror="this.onerror=null; this.src='https://placehold.co/40x40?text=TN';">
                 <div>
-                    <h1 class="font-bold text-slate-900 leading-tight text-base">ประกันคุณภาพ QA</h1>
-                    <span class="text-xs text-indigo-600 font-medium">รร.ทนาพรวิทยา</span>
+                    <h1 class="font-bold text-white leading-tight text-base">ประกันคุณภาพ QA</h1>
+                    <span class="text-xs text-blue-400 font-medium">รร.ทนาพรวิทยา</span>
                 </div>
             </div>
             
-            <div id="user-profile-side" class="p-4 mx-4 my-3 bg-white/80 rounded-xl flex items-center gap-3 border border-blue-100 shadow-sm">
+            <div id="user-profile-side" class="p-4 mx-4 my-3 bg-slate-800/50 rounded-xl flex items-center gap-3 border border-slate-700/50 shadow-sm">
                 <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm" id="user-avatar">U</div>
                 <div class="truncate">
-                    <p class="text-sm font-medium text-slate-800 truncate" id="user-fullname">กำลังโหลด...</p>
-                    <span class="text-xs text-indigo-600 font-medium capitalize" id="user-role-badge">User</span>
+                    <p class="text-sm font-medium text-white truncate" id="user-fullname">กำลังโหลด...</p>
+                    <span class="text-xs text-blue-400 font-medium capitalize" id="user-role-badge">User</span>
                 </div>
             </div>
 
             <nav class="flex-1 p-4 space-y-1 overflow-y-auto text-sm" id="desktop-nav-menu"></nav>
 
-            <div class="p-4 border-t border-blue-150/40 bg-white/20">
-                <button id="logout-btn-side" onclick="triggerLogout()" class="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 rounded-xl transition duration-200 font-medium hidden">
+            <div class="p-4 border-t border-slate-800 bg-slate-950/20">
+                <button id="logout-btn-side" onclick="triggerLogout()" class="w-full flex items-center gap-3 px-4 py-2.5 text-red-400 hover:bg-red-950/30 rounded-xl transition duration-200 font-medium hidden">
                     <i data-lucide="log-out" class="w-5 h-5"></i> ออกจากระบบ
                 </button>
             </div>
@@ -77,30 +102,32 @@
 
         <main id="main-workspace" class="w-full flex flex-col flex-1">
             
-            <header id="mobile-header" class="hidden bg-white border-b border-slate-200 p-4 sticky top-0 z-30 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <img src="logo.png" alt="โลโก้โรงเรียนทนาพรวิทยา" class="w-7 h-7 object-contain" onerror="this.onerror=null; this.style.display='none';">
-                    <span class="font-bold text-slate-900 text-sm">ทนาพรวิทยา QA</span>
+            <header id="mobile-header" class="hidden bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-30 flex items-center justify-between">
+                <div>
+                    <span class="font-bold text-white text-sm">โรงเรียนทนาพรวิทยา</span>
+                </div>
+                <div class="text-right">
+                    <span id="realtime-clock" class="text-xs font-mono text-indigo-400 font-medium bg-slate-950/60 px-3 py-1 rounded-lg border border-slate-800">กำลังโหลดเวลา...</span>
                 </div>
             </header>
 
             <div id="content-area" class="w-full p-4 md:p-8 flex-1">
                 </div>
 
-            <footer class="w-full py-4 px-6 border-t border-slate-200/60 bg-white/40 text-center">
-                <p class="text-[11px] md:text-xs text-slate-400 font-medium tracking-wide">
+            <footer class="w-full py-4 px-6 border-t border-white/10 bg-slate-950/20 text-center relative z-10">
+                <p class="text-[11px] md:text-xs text-blue-200/50 font-medium tracking-wide">
                     © 2026 โรงเรียนทนาพรวิทยา. ระบบสารสนเทศเพื่อการประกันคุณภาพการศึกษา
                 </p>
             </footer>
         </main>
 
-        <nav id="bottom-nav" class="hidden md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-1 justify-around items-center z-40 shadow-xl">
+        <nav id="bottom-nav" class="hidden md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 px-2 py-1 justify-around items-center z-40 shadow-xl">
         </nav>
 
-        <div id="admin-mobile-panel" class="fixed inset-x-0 bottom-16 bg-white border-t border-slate-200 shadow-2xl rounded-t-2xl p-4 z-40 transform translate-y-full transition-transform duration-300 hidden">
-            <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
-                <span class="font-bold text-slate-900 text-sm flex items-center gap-1"><i data-lucide="sliders" class="w-4 h-4 text-indigo-600"></i> เมนูแอดมินจัดการหลังบ้าน</span>
-                <button onclick="toggleAdminPanel(false)" class="text-slate-400 hover:text-slate-600 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <div id="admin-mobile-panel" class="fixed inset-x-0 bottom-16 bg-slate-900 border-t border-slate-800 shadow-2xl rounded-t-2xl p-4 z-40 transform translate-y-full transition-transform duration-300 hidden">
+            <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+                <span class="font-bold text-white text-sm flex items-center gap-1"><i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i> เมนูแอดมินจัดการหลังบ้าน</span>
+                <button onclick="toggleAdminPanel(false)" class="text-slate-400 hover:text-slate-200 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <div class="grid grid-cols-3 gap-2 text-center text-xs" id="admin-panel-grid"></div>
         </div>
@@ -171,13 +198,30 @@
                 title: "ส่วนที่ 4 เอกสารสำคัญ และหลักฐานอื่นๆ",
                 indicators: {
                     "เอกสารสำคัญ": [
-                        "แผนพัฒนาคุณภาพการจัดการศึกษา", "แผนปฏิบัติการประจําปี", "หลักสูตรสถานศึกษา และรายงานผลการประเมินการใช้หลักสูตร", 
+                        "แผนพัฒนาคุณภาพการจัดการศึกษา", "แผนปฏิบัติการประจำปี", "หลักสูตรสถานศึกษา และรายงานผลการประเมินการใช้หลักสูตร", 
                         "การกำหนดมาตรฐานการศึกษาและค่าเป้าหมายความสำเร็จ", "ผลการประเมินคุณภาพภายนอก (สมศ.)", "รายงานผลการประเมินตนเอง (SAR)", 
-                        "รายงานการวิจัยในชั้นเรียน", "รายงานผลการจัดกิจกรรม PLC", "Individual Assessment Report"
+                        "รายงานการวิจัยในชั้นเรียน", "รายงานผลการจัดกิจกรรม PLC", "Individual Assessment Report", "เอกสารที่เกี่ยวข้องอื่นๆ"
                     ]
                 }
             }
         };
+
+        // ฟังก์ชันอัปเดตเวลาแบบ Real-time (ตัวเลข 24 ชม. และ วันที่ไทย)
+        function updateRealTimeClock() {
+            const clockEl = document.getElementById('realtime-clock');
+            if (!clockEl) return;
+            
+            const now = new Date();
+            const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            
+            const formattedDate = now.toLocaleDateString('th-TH', dateOptions);
+            const formattedTime = now.toLocaleTimeString('th-TH', timeOptions);
+            
+            clockEl.innerText = `${formattedDate} ${formattedTime}`;
+        }
+        // รันฟังก์ชันนาฬิกาทุกๆ 1 วินาที
+        setInterval(updateRealTimeClock, 1000);
 
         function showToast(msg, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -236,20 +280,23 @@
             const sideLogout = document.getElementById('logout-btn-side');
             
             if (currentUser) {
-                // โหมดผู้ใช้งานล็อกอินสำเร็จ: จัดโครงสร้าง Flexbox แยก 2 คอลัมน์ (ซ้าย/ขวา)
+                // โหมดล็อกอิน
+                document.body.className = "bg-slate-900 text-slate-100 min-h-screen flex flex-col relative overflow-x-hidden";
                 appRoot.className = "w-full flex-1 flex flex-col md:flex-row"; 
                 mainWorkspace.className = "flex-1 flex flex-col min-w-0 pb-20 md:pb-0"; 
                 
-                sidebar.className = "flex flex-col w-72 bg-blue-50/80 border-r border-blue-200/60 h-screen sticky top-0 flex-shrink-0 z-30";
-                mHeader.className = "bg-white border-b border-slate-200 p-4 sticky top-0 z-30 flex items-center justify-between";
-                mNav.className = "md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-1 flex justify-around items-center z-40 shadow-xl";
+                sidebar.className = "flex flex-col w-72 bg-slate-950 border-r border-slate-800 h-screen sticky top-0 flex-shrink-0 z-30";
+                mHeader.className = "bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-30 flex items-center justify-between";
+                mNav.className = "md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 px-2 py-1 flex justify-around items-center z-40 shadow-xl";
                 
                 document.getElementById('user-fullname').innerText = currentUser.name;
                 document.getElementById('user-role-badge').innerText = currentUser.role === 'admin' ? 'ผู้ดูแลระบบ (Admin)' : 'คุณครู (Teacher)';
                 document.getElementById('user-avatar').innerText = currentUser.name.charAt(0);
                 sideLogout.classList.remove('hidden');
+                updateRealTimeClock(); // เรียกเปิดใช้งานนาฬิกาเมื่อโหลดสำเร็จ
             } else {
-                // โหมดผู้ใช้ภายนอก / ยังไม่ล็อกอิน: ยุบโครงสร้างเป็น 1 คอลัมน์เดี่ยว และซ่อนโครงสร้างแดชบอร์ดทั้งหมด
+                // โหมดไม่ได้ล็อกอิน: คืนค่าธีม Mesh Gradient
+                document.body.className = "bg-mesh text-slate-100 min-h-screen flex flex-col relative overflow-x-hidden";
                 appRoot.className = "w-full flex-1 flex flex-col items-center justify-start";
                 mainWorkspace.className = "w-full flex flex-col flex-1";
                 
@@ -257,7 +304,7 @@
                 mHeader.className = "hidden";
                 mNav.className = "hidden";
                 sideLogout.classList.add('hidden');
-                return; // ออกจากฟังก์ชันเพื่อไปเรียก render ต่อไป
+                return;
             }
 
             const coreMenus = [
@@ -272,8 +319,8 @@
             let dHtml = '';
             coreMenus.forEach(m => {
                 const activeCls = currentView === m.id 
-                    ? 'bg-white text-indigo-700 font-bold shadow-sm border border-blue-100/50' 
-                    : 'text-slate-600 hover:bg-white/50 hover:text-indigo-600';
+                    ? 'bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-950/50' 
+                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-white';
                 dHtml += `<button onclick="navigateTo('${m.id}')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition duration-150 ${activeCls}">
                     <i data-lucide="${m.icon}" class="w-4 h-4"></i> ${m.label}
                 </button>`;
@@ -284,7 +331,7 @@
             let mHtml = '';
             const mobileVisibleMenus = coreMenus.slice(0, 3); 
             mobileVisibleMenus.forEach(m => {
-                const activeCls = currentView === m.id ? 'text-indigo-600 font-medium' : 'text-slate-400';
+                const activeCls = currentView === m.id ? 'text-indigo-400 font-medium' : 'text-slate-500';
                 mHtml += `<button onclick="navigateTo('${m.id}')" class="flex flex-col items-center justify-center py-1 flex-1 ${activeCls}">
                     <i data-lucide="${m.icon}" class="w-5 h-5"></i>
                     <span class="text-[10px] mt-0.5">${m.label.split(' ')[0]}</span>
@@ -292,31 +339,31 @@
             });
 
             if (currentUser.role === 'admin') {
-                mHtml += `<button onclick="toggleAdminPanel(true)" class="flex flex-col items-center justify-center -translate-y-4 bg-indigo-600 text-white p-3 rounded-full shadow-lg border-4 border-white">
+                mHtml += `<button onclick="toggleAdminPanel(true)" class="flex flex-col items-center justify-center -translate-y-4 bg-indigo-600 text-white p-3 rounded-full shadow-lg border-4 border-slate-900">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>`;
                 
                 let gridHtml = '';
                 coreMenus.forEach(m => {
-                    gridHtml += `<button onclick="navigateTo('${m.id}'); toggleAdminPanel(false);" class="flex flex-col items-center bg-slate-50 hover:bg-indigo-50 p-3 rounded-xl border border-slate-100 transition">
-                        <i data-lucide="${m.icon}" class="w-5 h-5 text-indigo-600 mb-1"></i>
-                        <span class="text-slate-700">${m.label}</span>
+                    gridHtml += `<button onclick="navigateTo('${m.id}'); toggleAdminPanel(false);" class="flex flex-col items-center bg-slate-800 hover:bg-slate-700/60 p-3 rounded-xl border border-slate-700 transition">
+                        <i data-lucide="${m.icon}" class="w-5 h-5 text-indigo-400 mb-1"></i>
+                        <span class="text-slate-300">${m.label}</span>
                     </button>`;
                 });
-                gridHtml += `<button onclick="triggerLogout(); toggleAdminPanel(false);" class="flex flex-col items-center bg-red-50 hover:bg-red-100 p-3 rounded-xl border border-red-100 transition col-span-3 mt-2">
-                    <i data-lucide="log-out" class="w-5 h-5 text-red-600 mb-1"></i>
-                    <span class="text-red-700 font-medium">ออกจากระบบ</span>
+                gridHtml += `<button onclick="triggerLogout(); toggleAdminPanel(false);" class="flex flex-col items-center bg-red-950/20 hover:bg-red-950/40 p-3 rounded-xl border border-red-900/30 col-span-3 mt-2">
+                    <i data-lucide="log-out" class="w-5 h-5 text-red-400 mb-1"></i>
+                    <span class="text-red-400 font-medium">ออกจากระบบ</span>
                 </button>`;
                 pGrid.innerHTML = gridHtml;
             } else {
                 coreMenus.slice(3).forEach(m => {
-                    const activeCls = currentView === m.id ? 'text-indigo-600 font-medium' : 'text-slate-400';
+                    const activeCls = currentView === m.id ? 'text-indigo-400 font-medium' : 'text-slate-500';
                     mHtml += `<button onclick="navigateTo('${m.id}')" class="flex flex-col items-center justify-center py-1 flex-1 ${activeCls}">
                         <i data-lucide="${m.icon}" class="w-5 h-5"></i>
                         <span class="text-[10px] mt-0.5">${m.label.split(' ')[0]}</span>
                     </button>`;
                 });
-                mHtml += `<button onclick="triggerLogout()" class="flex flex-col items-center justify-center py-1 flex-1 text-red-500">
+                mHtml += `<button onclick="triggerLogout()" class="flex flex-col items-center justify-center py-1 flex-1 text-red-400">
                     <i data-lucide="log-out" class="w-5 h-5"></i>
                     <span class="text-[10px] mt-0.5">ออก</span>
                 </button>`;
@@ -330,7 +377,6 @@
             currentView = viewId;
             setupNavigation();
             
-            // ตรวจสอบสิทธิ์และดักสถานะการเข้าถึงหน้าเว็บบอร์ดหลัก
             if (!currentUser && viewId !== 'login') {
                 renderLandingPage();
                 return;
@@ -404,57 +450,64 @@
         // 7.1 หน้าแรกระบบ (LANDING PAGE VIEW)
         function renderLandingPage() {
             document.getElementById('content-area').innerHTML = `
-                <div class="max-w-4xl mx-auto py-6 md:py-12 px-4 flex flex-col items-center text-center fade-in">
+                <div class="max-w-4xl mx-auto py-8 md:py-16 px-4 flex flex-col items-center text-center relative z-10 fade-in">
                     
-                    <div class="mb-6 flex justify-center w-full">
+                    <div class="mb-8 flex justify-center w-full relative">
+                        <div class="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full w-32 h-32 mx-auto"></div>
                         <img src="logo.png" alt="โลโก้โรงเรียนทนาพรวิทยา" 
-                             class="w-32 h-32 md:w-36 md:h-36 object-contain drop-shadow-md transition-transform duration-300 hover:scale-105"
+                             class="w-32 h-32 md:w-36 md:h-36 object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.3)] transition-transform duration-500 hover:scale-110 relative z-10"
                              onerror="this.onerror=null; this.src='https://placehold.co/150x150?text=TN+LOGO';">
                     </div>
 
-                    <div class="glass-hero p-6 md:p-10 rounded-3xl shadow-xl w-full border border-slate-200/80 bg-white/75">
+                    <div class="glass-hero p-8 md:p-12 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] w-full border border-white/20 bg-slate-900/40 backdrop-blur-xl">
                         <div class="mb-4">
-                            <span class="bg-indigo-50 text-indigo-700 text-xs px-3 py-1.5 rounded-full font-semibold tracking-wider">ระบบสำหรับจัดเก็บข้อมูลและประเมินผลภายในคณาจารย์</span>
+                            <span class="bg-blue-500/20 text-blue-300 border border-blue-400/30 text-[11px] md:text-xs px-4 py-1.5 rounded-full font-medium tracking-wider uppercase">
+                                Educational Quality Assurance System
+                            </span>
                         </div>
 
-                        <h2 class="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight leading-tight">
+                        <h2 class="text-2xl md:text-4xl font-bold text-white tracking-tight leading-tight">
                             ระบบสารสนเทศเพื่อการประกันคุณภาพการศึกษา<br>
-                            <span class="text-indigo-600 text-xl md:text-2xl mt-1 block">โรงเรียนทนาพรวิทยา</span>
+                            <span class="bg-gradient-to-r from-blue-400 via-sky-300 to-indigo-400 bg-clip-text text-transparent text-xl md:text-3xl mt-2 block font-extrabold">
+                                โรงเรียนทนาพรวิทยา
+                            </span>
                         </h2>
                         
-                        <p class="text-xs md:text-sm text-slate-500 mt-4 max-w-2xl mx-auto leading-relaxed">
-                            แพลตฟอร์มบริหารจัดการร่องรอยหลักฐาน ตัวชี้วัดของการประเมินคุณภาพสถานศึกษาภายนอก เพื่อขับเคลื่อนการยกระดับและวางแผนพัฒนาคุณภาพการจัดการศึกษาขั้นพื้นฐานอย่างเป็นระบบและต่อเนื่อง
+                        <p class="text-xs md:text-sm text-slate-300/90 mt-5 max-w-2xl mx-auto leading-relaxed font-light">
+                            แพลตฟอร์มบริหารจัดการร่องรอยหลักฐาน ตัวชี้วัดของการประเมินคุณภาพสถานศึกษาภายในและภายนอก เพื่อขับเคลื่อนการยกระดับและวางแผนพัฒนาคุณภาพการจัดการศึกษาขั้นพื้นฐานอย่างเป็นระบบ
                         </p>
                         
-                        <div class="mt-8 flex justify-center">
-                            <button onclick="navigateTo('login')" class="w-full sm:w-auto px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-lg shadow-indigo-100 hover:shadow-indigo-200 transform hover:-translate-y-0.5 transition font-semibold text-sm flex items-center justify-center gap-2">
-                                <i data-lucide="log-in" class="w-4 h-4"></i> เข้าสู่ระบบใช้งานภายในคณาจารย์
+                        <div class="mt-10 flex justify-center">
+                            <button onclick="navigateTo('login')" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl shadow-lg shadow-blue-950/50 hover:shadow-xl hover:shadow-blue-500/20 transform hover:-translate-y-0.5 transition-all duration-200 font-semibold text-sm flex items-center justify-center gap-2 group">
+                                <i data-lucide="log-in" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i> เข้าสู่ระบบใช้งานภายในคณาจารย์
                             </button>
                         </div>
                     </div>
 
-                    <div class="w-full mt-10 text-left">
-                        <h3 class="text-base font-bold text-slate-900 mb-4 border-l-4 border-indigo-600 pl-3">โครงสร้างกรอบมาตรฐานการประกันคุณภาพ</h3>
-                        <div class="grid grid-cols-1 gap-3">
-                            <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex gap-4 items-start">
-                                <div class="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center flex-shrink-0"><i data-lucide="graduation-cap" class="w-4 h-4"></i></div>
+                    <div class="w-full mt-12 text-left">
+                        <h3 class="text-sm md:text-base font-semibold text-blue-300 mb-5 border-l-4 border-blue-500 pl-3 tracking-wide">
+                            โครงสร้างกรอบมาตรฐานการประกันคุณภาพ
+                        </h3>
+                        <div class="grid grid-cols-1 gap-4">
+                            <div class="bg-slate-900/30 p-5 rounded-2xl border border-white/5 shadow-inner flex gap-4 items-start hover:border-blue-500/30 transition duration-300">
+                                <div class="w-9 h-9 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center flex-shrink-0 border border-emerald-500/20"><i data-lucide="graduation-cap" class="w-4 h-4"></i></div>
                                 <div>
-                                    <h4 class="font-bold text-slate-900 text-xs md:text-sm">มาตรฐานที่ 1: ผลลัพธ์ของการเรียนรู้</h4>
-                                    <p class="text-[11px] md:text-xs text-slate-500 mt-0.5">มุ่งเน้นสมรรถนะผู้เรียน ความสามารถในการอ่านการเขียน การคิดคำนวณ และคุณลักษณะที่พึงประสงค์ตามหลักสูตร</p>
+                                    <h4 class="font-bold text-white text-xs md:text-sm">มาตรฐานที่ 1: ผลลัพธ์ของการเรียนรู้</h4>
+                                    <p class="text-[11px] md:text-xs text-slate-400 mt-1 leading-relaxed">มุ่งเน้นสมรรถนะผู้เรียน ความสามารถในการอ่านการเขียน การคิดคำนวณ และคุณลักษณะที่พึงประสงค์ตามหลักสูตร</p>
                                 </div>
                             </div>
-                            <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex gap-4 items-start">
-                                <div class="w-8 h-8 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center flex-shrink-0"><i data-lucide="building" class="w-4 h-4"></i></div>
+                            <div class="bg-slate-900/30 p-5 rounded-2xl border border-white/5 shadow-inner flex gap-4 items-start hover:border-blue-500/30 transition duration-300">
+                                <div class="w-9 h-9 bg-amber-500/10 text-amber-400 rounded-xl flex items-center justify-center flex-shrink-0 border border-amber-500/20"><i data-lucide="building" class="w-4 h-4"></i></div>
                                 <div>
-                                    <h4 class="font-bold text-slate-900 text-xs md:text-sm">มาตรฐานที่ 2: การพัฒนาคุณภาพการบริหารจัดการสถานศึกษา</h4>
-                                    <p class="text-[11px] md:text-xs text-slate-500 mt-0.5">วิสัยทัศน์ แผนปฏิบัติการประจำปี การพัฒนาบุคลากรครู ชุมชน PLC ระบบดูแลช่วยเหลือนักเรียน และสภาพแวดล้อมที่ปลอดภัย</p>
+                                    <h4 class="font-bold text-white text-xs md:text-sm">มาตรฐานที่ 2: การพัฒนาคุณภาพการบริหารจัดการสถานศึกษา</h4>
+                                    <p class="text-[11px] md:text-xs text-slate-400 mt-1 leading-relaxed">วิสัยทัศน์ แผนปฏิบัติการประจำปี การพัฒนาบุคลากรครู ชุมชน PLC ระบบดูแลช่วยเหลือนักเรียน และสภาพแวดล้อมที่ปลอดภัย</p>
                                 </div>
                             </div>
-                            <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex gap-4 items-start">
-                                <div class="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0"><i data-lucide="book-open" class="w-4 h-4"></i></div>
+                            <div class="bg-slate-900/30 p-5 rounded-2xl border border-white/5 shadow-inner flex gap-4 items-start hover:border-blue-500/30 transition duration-300">
+                                <div class="w-9 h-9 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center flex-shrink-0 border border-blue-500/20"><i data-lucide="book-open" class="w-4 h-4"></i></div>
                                 <div>
-                                    <h4 class="font-bold text-slate-900 text-xs md:text-sm">มาตรฐานที่ 3: การพัฒนาคุณภาพการจัดการเรียนรู้</h4>
-                                    <p class="text-[11px] md:text-xs text-slate-500 mt-0.5">การออกแบบหลักสูตรสถานศึกษา แผนการจัดกิจกรรมเชิงรุก (Active Learning) บันทึกหลังการสอน และการวัดประเมินผลอย่างเป็นระบบ</p>
+                                    <h4 class="font-bold text-white text-xs md:text-sm">มาตรฐานที่ 3: การพัฒนาคุณภาพการจัดการเรียนรู้</h4>
+                                    <p class="text-[11px] md:text-xs text-slate-400 mt-1 leading-relaxed">การออกแบบหลักสูตรสถานศึกษา แผนการจัดกิจกรรมเชิงรุก (Active Learning) บันทึกหลังการสอน และการวัดประเมินผลอย่างเป็นระบบ</p>
                                 </div>
                             </div>
                         </div>
@@ -467,26 +520,26 @@
         // 7.2 หน้าเข้าสู่ระบบ (LOGIN VIEW)
         function renderLoginPage() {
             document.getElementById('content-area').innerHTML = `
-                <div class="max-w-md mx-auto my-12 p-8 bg-white rounded-2xl border border-slate-100 shadow-xl slide-up">
+                <div class="max-w-md mx-auto my-12 p-8 bg-slate-900 rounded-2xl border border-slate-800 shadow-2xl slide-up">
                     <div class="text-center mb-6">
-                        <h3 class="text-xl font-bold text-slate-900">เข้าสู่ระบบประกันคุณภาพ (QA)</h3>
+                        <h3 class="text-xl font-bold text-white">เข้าสู่ระบบประกันคุณภาพ (QA)</h3>
                         <p class="text-xs text-slate-400 mt-1">กรุณากรอกสิทธิ์เข้าใช้งานของสถานศึกษา</p>
                     </div>
                     <form id="login-form" onsubmit="handleCustomLogin(event)" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-medium text-slate-600 mb-1">Username (ชื่อผู้ใช้)</label>
-                            <input type="text" id="login-user" required placeholder="ระบุบัญชีผู้ใช้ เช่น admin หรือ teacher1" class="w-full px-4 py-2.5 text-xs md:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Username (ชื่อผู้ใช้)</label>
+                            <input type="text" id="login-user" required placeholder="ระบุบัญชีผู้ใช้ เช่น admin หรือ teacher1" class="w-full bg-slate-950 px-4 py-2.5 text-xs md:text-sm border border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-white">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-600 mb-1">Password (รหัสผ่าน)</label>
-                            <input type="password" id="login-pass" required placeholder="••••••••" class="w-full px-4 py-2.5 text-xs md:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Password (รหัสผ่าน)</label>
+                            <input type="password" id="login-pass" required placeholder="••••••••" class="w-full bg-slate-950 px-4 py-2.5 text-xs md:text-sm border border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-white">
                         </div>
                         <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs md:text-sm font-medium transition shadow-md">
                             ยืนยันการเข้าสู่ระบบ
                         </button>
                     </form>
-                    <div class="mt-4 pt-4 border-t border-slate-100 text-center">
-                        <button onclick="navigateTo('landing')" class="text-xs text-indigo-600 hover:underline">← กลับหน้าหลักโรงเรียน</button>
+                    <div class="mt-4 pt-4 border-t border-slate-800 text-center">
+                        <button onclick="navigateTo('landing')" class="text-xs text-blue-400 hover:underline">← กลับหน้าหลักโรงเรียน</button>
                     </div>
                 </div>
             `;
@@ -534,76 +587,223 @@
                 if (item.module_part === 4) partStats.part4++;
             });
 
+            // เจนเนอเรตส่วนสรุปเอกสารแบบ 3 คอลัมน์แยกตาม มฐ.1, 2, 3 ด้านล่าง
+            let columnsHtml = '';
+            const targetParts = ['part1', 'part2', 'part3'];
+
+            targetParts.forEach(partKey => {
+                const partMeta = modulesStructure[partKey];
+                const partNum = parseInt(partKey.replace('part', ''));
+                
+                let partContentHtml = `
+                    <div class="bg-slate-950/40 p-5 rounded-2xl border border-slate-800 flex flex-col h-full hover:border-slate-700/50 transition">
+                        <h4 class="text-xs md:text-sm font-bold text-blue-400 border-b border-slate-800 pb-2 mb-3 flex items-center gap-1.5">
+                            <i data-lucide="folder" class="w-4 h-4"></i> ${partMeta.title.split(' ')[2] || partMeta.title}
+                        </h4>
+                        <div class="space-y-4 flex-1 overflow-y-auto max-h-[400px] pr-1">
+                `;
+
+                Object.keys(partMeta.indicators).forEach(indicatorKey => {
+                    const matchedFiles = evidenceDataCache.filter(e => e.module_part === partNum && e.indicator_title === indicatorKey);
+                    
+                    partContentHtml += `
+                        <div>
+                            <h5 class="text-[11px] md:text-xs font-semibold text-slate-300 bg-slate-900/60 px-2 py-1 rounded border-l-2 border-indigo-500 tracking-wide">
+                                ${indicatorKey}
+                            </h5>
+                            <ul class="mt-1.5 space-y-1 pl-2">
+                    `;
+
+                    if (matchedFiles.length === 0) {
+                        partContentHtml += `<li class="text-[10px] text-slate-500 italic pl-2">ยังไม่มีข้อมูลเอกสารหลักฐาน</li>`;
+                    } else {
+                        matchedFiles.forEach(file => {
+                            let iconTag = '<i data-lucide="file" class="w-3 h-3 inline text-slate-400"></i>';
+                            if (file.type === 'pdf') iconTag = '<i data-lucide="file-down" class="w-3 h-3 inline text-rose-400"></i>';
+                            if (['jpg', 'png'].includes(file.type)) iconTag = '<i data-lucide="image" class="w-3 h-3 inline text-amber-400"></i>';
+                            if (['url', 'drive'].includes(file.type)) iconTag = '<i data-lucide="link" class="w-3 h-3 inline text-purple-400"></i>';
+
+                            partContentHtml += `
+                                <li class="text-[10px] md:text-xs text-slate-400 flex items-start gap-1.5 hover:text-white transition py-0.5">
+                                    <span class="mt-0.5 flex-shrink-0">${iconTag}</span>
+                                    <a href="${file.source_url}" target="_blank" class="hover:underline truncate" title="${file.title}">
+                                        ${file.title}
+                                    </a>
+                                </li>
+                            `;
+                        });
+                    }
+
+                    partContentHtml += `
+                            </ul>
+                        </div>
+                    `;
+                });
+
+                partContentHtml += `
+                        </div>
+                    </div>
+                `;
+                columnsHtml += partContentHtml;
+            });
+
+            // เจนเนอเรตส่วนสรุปเอกสาร "ส่วนที่ 4" แบบ 1 คอลัมน์เต็ม (Full Width)
+            const part4Meta = modulesStructure['part4'];
+            const matchedPart4Files = evidenceDataCache.filter(e => e.module_part === 4);
+            
+            let part4Html = `
+                <div class="bg-slate-950/40 p-5 rounded-2xl border border-slate-800 hover:border-slate-700/50 transition">
+                    <h4 class="text-xs md:text-sm font-bold text-indigo-400 border-b border-slate-800 pb-2 mb-3 flex items-center gap-1.5">
+                        <i data-lucide="folder-heart" class="w-4 h-4"></i> ${part4Meta.title}
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            `;
+
+            Object.keys(part4Meta.indicators).forEach(indicatorKey => {
+                const subCriteriaList = part4Meta.indicators[indicatorKey];
+                
+                subCriteriaList.forEach(criterion => {
+                    const criterionFiles = matchedPart4Files.filter(e => e.item_type === criterion);
+                    
+                    part4Html += `
+                        <div class="bg-slate-900/40 p-3 rounded-xl border border-slate-800/60">
+                            <h5 class="text-[11px] md:text-xs font-semibold text-slate-300 bg-slate-950 px-2 py-1 rounded border-l-2 border-pink-500 tracking-wide">
+                                ${criterion}
+                            </h5>
+                            <ul class="mt-2 space-y-1 pl-1">
+                    `;
+
+                    if (criterionFiles.length === 0) {
+                        part4Html += `<li class="text-[10px] text-slate-500 italic pl-2">ยังไม่มีข้อมูลเอกสารสำคัญ</li>`;
+                    } else {
+                        criterionFiles.forEach(file => {
+                            let iconTag = '<i data-lucide="file" class="w-3 h-3 inline text-slate-400"></i>';
+                            if (file.type === 'pdf') iconTag = '<i data-lucide="file-down" class="w-3 h-3 inline text-rose-400"></i>';
+                            if (['jpg', 'png'].includes(file.type)) iconTag = '<i data-lucide="image" class="w-3 h-3 inline text-amber-400"></i>';
+                            if (['url', 'drive'].includes(file.type)) iconTag = '<i data-lucide="link" class="w-3 h-3 inline text-purple-400"></i>';
+
+                            part4Html += `
+                                <li class="text-[10px] md:text-xs text-slate-400 flex items-start gap-1.5 hover:text-white transition py-0.5">
+                                    <span class="mt-0.5 flex-shrink-0">${iconTag}</span>
+                                    <a href="${file.source_url}" target="_blank" class="hover:underline truncate" title="${file.title}">
+                                        ${file.title}
+                                    </a>
+                                </li>
+                            `;
+                        });
+                    }
+
+                    part4Html += `
+                            </ul>
+                        </div>
+                    `;
+                });
+            });
+
+            part4Html += `
+                    </div>
+                </div>
+            `;
+
             document.getElementById('content-area').innerHTML = `
                 <div class="space-y-6 fade-in">
                     <div>
-                        <h2 class="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">ระบบวิเคราะห์แดชบอร์ดข้อมูล (Executive Dashboard)</h2>
+                        <h2 class="text-xl md:text-2xl font-bold text-white tracking-tight">ระบบวิเคราะห์แดชบอร์ดข้อมูล (Executive Dashboard)</h2>
                         <p class="text-xs text-slate-400 mt-1">สารสนเทศจำนวนแฟ้มร่องรอยหลักฐานประกันคุณภาพแยกตามกรอบการประเมินภายนอก</p>
                     </div>
 
                     <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
-                        <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex items-center gap-3">
-                            <div class="p-2 bg-blue-50 text-blue-600 rounded-lg"><i data-lucide="file-text" class="w-5 h-5"></i></div>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 shadow-sm flex items-center gap-3">
+                            <div class="p-2 bg-blue-950/40 text-blue-400 rounded-lg"><i data-lucide="file-text" class="w-5 h-5"></i></div>
                             <div><p class="text-[10px] text-slate-400 uppercase font-medium">Word Docs</p><h4 class="text-lg font-bold">${stats.doc}</h4></div>
                         </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex items-center gap-3">
-                            <div class="p-2 bg-rose-50 text-rose-600 rounded-lg"><i data-lucide="file-down" class="w-5 h-5"></i></div>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 shadow-sm flex items-center gap-3">
+                            <div class="p-2 bg-rose-950/40 text-rose-400 rounded-lg"><i data-lucide="file-down" class="w-5 h-5"></i></div>
                             <div><p class="text-[10px] text-slate-400 uppercase font-medium">PDF Files</p><h4 class="text-lg font-bold">${stats.pdf}</h4></div>
                         </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex items-center gap-3">
-                            <div class="p-2 bg-amber-50 text-amber-600 rounded-lg"><i data-lucide="image" class="w-5 h-5"></i></div>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 shadow-sm flex items-center gap-3">
+                            <div class="p-2 bg-amber-950/40 text-amber-400 rounded-lg"><i data-lucide="image" class="w-5 h-5"></i></div>
                             <div><p class="text-[10px] text-slate-400 uppercase font-medium">JPG Images</p><h4 class="text-lg font-bold">${stats.jpg}</h4></div>
                         </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex items-center gap-3">
-                            <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg"><i data-lucide="image" class="w-5 h-5"></i></div>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 shadow-sm flex items-center gap-3">
+                            <div class="p-2 bg-emerald-950/40 text-emerald-400 rounded-lg"><i data-lucide="image" class="w-5 h-5"></i></div>
                             <div><p class="text-[10px] text-slate-400 uppercase font-medium">PNG Images</p><h4 class="text-lg font-bold">${stats.png}</h4></div>
                         </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex items-center gap-3">
-                            <div class="p-2 bg-purple-50 text-purple-600 rounded-lg"><i data-lucide="link" class="w-5 h-5"></i></div>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 shadow-sm flex items-center gap-3">
+                            <div class="p-2 bg-purple-950/40 text-purple-400 rounded-lg"><i data-lucide="link" class="w-5 h-5"></i></div>
                             <div><p class="text-[10px] text-slate-400 uppercase font-medium">Web URLs</p><h4 class="text-lg font-bold">${stats.url}</h4></div>
                         </div>
-                        <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex items-center gap-3">
-                            <div class="p-2 bg-orange-50 text-orange-600 rounded-lg"><i data-lucide="hard-drive" class="w-5 h-5"></i></div>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 shadow-sm flex items-center gap-3">
+                            <div class="p-2 bg-orange-950/40 text-orange-400 rounded-lg"><i data-lucide="hard-drive" class="w-5 h-5"></i></div>
                             <div><p class="text-[10px] text-slate-400 uppercase font-medium">Google Drive</p><h4 class="text-lg font-bold">${stats.drive}</h4></div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm md:col-span-2 flex flex-col justify-between">
-                            <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-1"><i data-lucide="bar-chart-3" class="w-4 h-4 text-indigo-600"></i> แผนภูมิแท่งวิเคราะห์สัดส่วนตัวบ่งชี้</h3>
+                        <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm md:col-span-2 flex flex-col justify-between">
+                            <h3 class="text-sm font-bold text-slate-200 mb-4 flex items-center gap-1"><i data-lucide="bar-chart-3" class="w-4 h-4 text-indigo-400"></i> แผนภูมิแท่งวิเคราะห์สัดส่วนตัวบ่งชี้</h3>
                             <div class="relative w-full max-h-64 flex justify-center">
                                 <canvas id="chart-parts" width="400" height="200"></canvas>
                             </div>
                         </div>
 
-                        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm space-y-4">
-                            <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1"><i data-lucide="clipboard-list" class="w-4 h-4 text-indigo-600"></i> ปริมาณร่องรอยที่จัดเก็บแล้ว</h3>
+                        <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm space-y-4">
+                            <h3 class="text-sm font-bold text-slate-200 flex items-center gap-1"><i data-lucide="clipboard-list" class="w-4 h-4 text-indigo-400"></i> ปริมาณร่องรอยที่จัดเก็บแล้ว</h3>
                             <div class="space-y-3 text-xs">
-                                <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center">
-                                    <span class="font-medium text-slate-700">มาตรฐานที่ 1 (ผลลัพธ์ผู้เรียน)</span>
-                                    <span class="bg-indigo-100 text-indigo-700 font-bold px-2.5 py-0.5 rounded-full">${partStats.part1} รายการ</span>
+                                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
+                                    <span class="font-medium text-slate-300">มาตรฐานที่ 1 (ผลลัพธ์ผู้เรียน)</span>
+                                    <span class="bg-indigo-950 text-indigo-300 font-bold px-2.5 py-0.5 rounded-full">${partStats.part1} รายการ</span>
                                 </div>
-                                <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center">
-                                    <span class="font-medium text-slate-700">มาตรฐานที่ 2 (การบริหารจัดการ)</span>
-                                    <span class="bg-indigo-100 text-indigo-700 font-bold px-2.5 py-0.5 rounded-full">${partStats.part2} รายการ</span>
+                                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
+                                    <span class="font-medium text-slate-300">มาตรฐานที่ 2 (การบริหารจัดการ)</span>
+                                    <span class="bg-indigo-950 text-indigo-300 font-bold px-2.5 py-0.5 rounded-full">${partStats.part2} รายการ</span>
                                 </div>
-                                <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center">
-                                    <span class="font-medium text-slate-700">มาตรฐานที่ 3 (การจัดการเรียนรู้)</span>
-                                    <span class="bg-indigo-100 text-indigo-700 font-bold px-2.5 py-0.5 rounded-full">${partStats.part3} ราย元</span>
+                                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
+                                    <span class="font-medium text-slate-300">มาตรฐานที่ 3 (การจัดการเรียนรู้)</span>
+                                    <span class="bg-indigo-950 text-indigo-300 font-bold px-2.5 py-0.5 rounded-full">${partStats.part3} รายการ</span>
                                 </div>
-                                <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center">
-                                    <span class="font-medium text-slate-700">ส่วนที่ 4 (เอกสารสำคัญอื่นๆ)</span>
-                                    <span class="bg-indigo-100 text-indigo-700 font-bold px-2.5 py-0.5 rounded-full">${partStats.part4} รายการ</span>
+                                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
+                                    <span class="font-medium text-slate-300">ส่วนที่ 4 (เอกสารสำคัญอื่นๆ)</span>
+                                    <span class="bg-indigo-950 text-indigo-300 font-bold px-2.5 py-0.5 rounded-full">${partStats.part4} รายการ</span>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-sm space-y-4">
+                        <div class="border-b border-slate-800 pb-2">
+                            <h3 class="text-sm font-bold text-slate-200 flex items-center gap-1.5">
+                                <i data-lucide="layers" class="w-4 h-4 text-indigo-400"></i> ทำเนียบสรุปแฟ้มผลงานร่องรอยตามโครงสร้างมาตรฐานประกันคุณภาพ
+                            </h3>
+                            <p class="text-[11px] text-slate-400 mt-0.5">รวมไฟล์แนบและหลักฐานอ้างอิงทั้งหมดในระบบที่ผ่านการตรวจสอบแล้วในแต่ละเกณฑ์ย่อยของ มาตรฐานที่ 1, 2, 3</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 alignment-stretch">
+                            ${columnsHtml}
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-sm space-y-4">
+                        <div class="border-b border-slate-800 pb-2">
+                            <h3 class="text-sm font-bold text-slate-200 flex items-center gap-1.5">
+                                <i data-lucide="folder-heart" class="w-4 h-4 text-pink-400"></i> ทำเนียบเอกสารสำคัญ และหลักฐานอื่นๆ (ส่วนที่ 4)
+                            </h3>
+                            <p class="text-[11px] text-slate-400 mt-0.5">รวมไฟล์แผนพัฒนา ทะเบียนผลงานวิจัย แฟ้มรายงานประจำปี สารสนเทศ SAR และเอกสารเชิงนโยบายของสถานศึกษา</p>
+                        </div>
+                        <div class="w-full">
+                            ${part4Html}
+                        </div>
+                    </div>
+
                 </div>
             `;
             lucide.createIcons();
             
             const ctx = document.getElementById('chart-parts').getContext('2d');
             if(dashboardChartInstance) dashboardChartInstance.destroy();
+            
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.borderColor = '#334155';
+
             dashboardChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -611,7 +811,7 @@
                     datasets: [{
                         label: 'จำนวนรายการหลักฐานในคลาวด์',
                         data: [partStats.part1, partStats.part2, partStats.part3, partStats.part4],
-                        backgroundColor: ['#10b981', '#f59e0b', '#4f46e5', '#64748b'],
+                        backgroundColor: ['#10b981', '#f59e0b', '#6366f1', '#ec4899'],
                         borderRadius: 8
                     }]
                 },
@@ -645,30 +845,30 @@
                 <div class="space-y-6 fade-in">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
-                            <h2 class="text-lg md:text-xl font-bold text-slate-900">${partMeta.title}</h2>
+                            <h2 class="text-lg md:text-xl font-bold text-white">${partMeta.title}</h2>
                             <p class="text-xs text-slate-400 mt-0.5">ตารางสืบค้นและกำกับแฟ้มข้อมูลตามข้อบ่งชี้</p>
                         </div>
                         <div class="flex gap-2 w-full md:w-auto">
-                            <button onclick="openUploadModal()" class="flex-1 md:flex-initial bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2.5 rounded-xl font-medium transition flex items-center justify-center gap-2 shadow-md shadow-indigo-100">
+                            <button onclick="openUploadModal()" class="flex-1 md:flex-initial bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2.5 rounded-xl font-medium transition flex items-center justify-center gap-2 shadow-md shadow-indigo-950/50">
                                 <i data-lucide="plus-circle" class="w-4 h-4"></i> เพิ่มข้อมูลหลักฐาน
                             </button>
-                            <button onclick="window.print()" class="bg-white border border-slate-200 text-slate-700 text-xs px-3 py-2.5 rounded-xl font-medium hover:bg-slate-50 transition flex items-center justify-center gap-1">
+                            <button onclick="window.print()" class="bg-slate-800 border border-slate-700 text-slate-200 text-xs px-3 py-2.5 rounded-xl font-medium hover:bg-slate-700 transition flex items-center justify-center gap-1">
                                 <i data-lucide="printer" class="w-4 h-4"></i>พิมพ์
                             </button>
                         </div>
                     </div>
 
-                    <div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex items-center gap-2">
-                        <i data-lucide="search" class="text-slate-400 w-4 h-4 ml-2"></i>
-                        <input type="text" id="evidence-search-input" value="${searchQuery}" oninput="executeSearchFilter()" placeholder="พิมพ์สิ่งที่ต้องการค้นหาที่นี่..." class="w-full text-xs md:text-sm focus:outline-none bg-transparent">
-                        ${searchQuery ? `<button onclick="clearSearchFilter()" class="text-slate-400 hover:text-slate-600 text-xs px-2">ล้าง</button>` : ''}
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 shadow-sm flex items-center gap-2">
+                        <i data-lucide="search" class="text-slate-500 w-4 h-4 ml-2"></i>
+                        <input type="text" id="evidence-search-input" value="${searchQuery}" oninput="executeSearchFilter()" placeholder="พิมพ์สิ่งที่ต้องการค้นหาที่นี่..." class="w-full text-xs md:text-sm focus:outline-none bg-transparent text-white">
+                        ${searchQuery ? `<button onclick="clearSearchFilter()" class="text-slate-400 hover:text-slate-200 text-xs px-2">ล้าง</button>` : ''}
                     </div>
 
-                    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                    <div class="bg-slate-900 rounded-2xl border border-slate-800 shadow-sm overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse text-xs md:text-sm">
                                 <thead>
-                                    <tr class="bg-slate-50 border-b border-slate-100 text-slate-500 font-medium">
+                                    <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 font-medium">
                                         <th class="p-4 w-1/3">ตัวชี้วัด / เกณฑ์ย่อย</th>
                                         <th class="p-4 w-1/3">ชื่อไฟล์เอกสารร่องรอย</th>
                                         <th class="p-4 text-center">ประเภท</th>
@@ -676,39 +876,46 @@
                                         <th class="p-4 text-right">การจัดการ</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-50">
+                                <tbody class="divide-y divide-slate-800/60">
             `;
 
             if (itemsFiltered.length === 0) {
-                html += `<tr><td colspan="5" class="p-8 text-center text-slate-400 text-xs font-medium">ไม่พบผลลัพธ์ข้อมูลหลักฐานที่ค้นหา</td></tr>`;
+                html += `<tr><td colspan="5" class="p-8 text-center text-slate-500 text-xs font-medium">ไม่พบผลลัพธ์ข้อมูลหลักฐานที่ค้นหา</td></tr>`;
             } else {
                 itemsFiltered.forEach(item => {
-                    const typeLabels = { doc: 'bg-blue-50 text-blue-600', pdf: 'bg-rose-50 text-rose-600', jpg: 'bg-amber-50 text-amber-600', png: 'bg-emerald-50 text-emerald-600', url: 'bg-purple-50 text-purple-600', drive: 'bg-orange-50 text-orange-600' };
+                    const typeLabels = { 
+                        doc: 'bg-blue-950/60 text-blue-400 border border-blue-900/40', 
+                        pdf: 'bg-rose-950/60 text-rose-400 border border-rose-900/40', 
+                        jpg: 'bg-amber-950/60 text-amber-400 border border-amber-900/40', 
+                        png: 'bg-emerald-950/60 text-emerald-400 border border-emerald-900/40', 
+                        url: 'bg-purple-950/60 text-purple-400 border border-purple-900/40', 
+                        drive: 'bg-orange-950/60 text-orange-400 border border-orange-900/40' 
+                    };
                     const canManage = currentUser.role === 'admin' || item.created_by === currentUser.username;
                     
                     html += `
-                        <tr class="hover:bg-slate-50/50 transition">
+                        <tr class="hover:bg-slate-800/30 transition">
                             <td class="p-4">
-                                <p class="font-medium text-slate-800 text-xs truncate max-w-xs">${item.indicator_title || 'เอกสารระบบ'}</p>
+                                <p class="font-medium text-slate-200 text-xs truncate max-w-xs">${item.indicator_title || 'เอกสารระบบ'}</p>
                                 <span class="text-[10px] text-slate-400 block truncate max-w-xs mt-0.5">${item.item_type}</span>
                             </td>
-                            <td class="p-4 font-medium text-slate-900">
+                            <td class="p-4 font-medium text-white">
                                 ${item.type === 'jpg' || item.type === 'png' ? `
                                     <div class="flex items-center gap-2">
-                                        <img src="${item.source_url}" onerror="this.onerror=null; this.outerHTML='<span class=\'text-[10px] text-red-500\'>[Missing Image]</span>';" class="w-8 h-8 rounded-lg object-cover border border-slate-200">
+                                        <img src="${item.source_url}" onerror="this.onerror=null; this.outerHTML='<span class=\'text-[10px] text-red-400\'>[Missing Image]</span>';" class="w-8 h-8 rounded-lg object-cover border border-slate-700">
                                         <span class="truncate max-w-[150px]">${item.title}</span>
                                     </div>
                                 ` : `<span class="truncate max-w-[200px] block">${item.title}</span>`}
                             </td>
                             <td class="p-4 text-center">
-                                <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold ${typeLabels[item.type] || 'bg-slate-100'}">${item.type}</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold ${typeLabels[item.type] || 'bg-slate-800 text-slate-300'}">${item.type}</span>
                             </td>
-                            <td class="p-4 text-center text-slate-500 text-xs">${item.created_by || 'Staff'}</td>
+                            <td class="p-4 text-center text-slate-400 text-xs">${item.created_by || 'Staff'}</td>
                             <td class="p-4 text-right space-x-1 whitespace-nowrap">
-                                <a href="${item.source_url}" target="_blank" class="inline-flex items-center justify-center p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition"><i data-lucide="eye" class="w-4 h-4"></i></a>
+                                <a href="${item.source_url}" target="_blank" class="inline-flex items-center justify-center p-2 text-indigo-400 hover:bg-slate-800 rounded-lg transition"><i data-lucide="eye" class="w-4 h-4"></i></a>
                                 ${canManage ? `
-                                    <button onclick="deleteEvidenceItem(${item.id})" class="inline-flex items-center justify-center p-2 text-red-500 hover:bg-red-50 rounded-lg transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                                ` : `<button disabled class="p-2 text-slate-300 cursor-not-allowed"><i data-lucide="lock" class="w-4 h-4"></i></button>`}
+                                    <button onclick="deleteEvidenceItem(${item.id})" class="inline-flex items-center justify-center p-2 text-red-400 hover:bg-slate-800 rounded-lg transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                ` : `<button disabled class="p-2 text-slate-600 cursor-not-allowed"><i data-lucide="lock" class="w-4 h-4"></i></button>`}
                             </td>
                         </tr>
                     `;
@@ -722,28 +929,28 @@
                     </div>
                 </div>
 
-                <div id="upload-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-                    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto slide-up">
-                        <div class="flex justify-between items-center pb-3 border-b border-slate-100">
-                            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5"><i data-lucide="file-plus" class="text-indigo-600 w-4 h-4"></i> เพิ่มบันทึกหลักฐานข้อมูลคลาวด์</h3>
-                            <button onclick="closeUploadModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <div id="upload-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto slide-up">
+                        <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-1.5"><i data-lucide="file-plus" class="text-indigo-400 w-4 h-4"></i> เพิ่มบันทึกหลักฐานข้อมูลคลาวด์</h3>
+                            <button onclick="closeUploadModal()" class="text-slate-400 hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
                         </div>
                         <form id="upload-form" onsubmit="handleFormSubmit(event)" class="space-y-4 mt-4 text-xs md:text-sm">
                             <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1">กรอบตัวชี้วัด</label>
-                                <select id="form-indicator" required onchange="updateFormItemTypes()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none"></select>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">กรอบตัวชี้วัด</label>
+                                <select id="form-indicator" required onchange="updateFormItemTypes()" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none text-white"></select>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1">หลักเกณฑ์ย่อยพิจารณา</label>
-                                <select id="form-item-type" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none"></select>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">หลักเกณฑ์ย่อยพิจารณา</label>
+                                <select id="form-item-type" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none text-white"></select>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1">ชื่อโครงการ / เอกสารอ้างอิง</label>
-                                <input type="text" id="form-title" required placeholder="พิมพ์ระบุชื่อชิ้นงานหลักฐานหลัก..." class="w-full p-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+                                <label class="block text-xs font-medium text-slate-400 mb-1">ชื่อโครงการ / เอกสารอ้างอิง</label>
+                                <input type="text" id="form-title" required placeholder="พิมพ์ระบุชื่อชิ้นงานหลักฐานหลัก..." class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-white">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1">รูปแบบสื่อจัดเก็บ</label>
-                                <select id="form-type" required onchange="toggleFormUploadSource()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none">
+                                <label class="block text-xs font-medium text-slate-400 mb-1">รูปแบบสื่อจัดเก็บ</label>
+                                <select id="form-type" required onchange="toggleFormUploadSource()" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none text-white">
                                     <option value="url">ลิงก์ภายนอกอินเทอร์เน็ต (URL)</option>
                                     <option value="drive">แชร์ลิงก์ Google Drive</option>
                                     <option value="doc">ไฟล์ Microsoft Word (doc/docx)</option>
@@ -754,17 +961,17 @@
                             </div>
                             
                             <div id="src-link-wrapper">
-                                <label class="block text-xs font-medium text-slate-600 mb-1">วางลิงก์สากลปลายทาง (Source URL)</label>
-                                <input type="url" id="form-source-url" placeholder="https://..." class="w-full p-2.5 border border-slate-200 rounded-xl focus:outline-none">
+                                <label class="block text-xs font-medium text-slate-400 mb-1">วางลิงก์สากลปลายทาง (Source URL)</label>
+                                <input type="url" id="form-source-url" placeholder="https://..." class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none text-white">
                             </div>
 
                             <div id="src-file-wrapper" class="hidden">
-                                <label class="block text-xs font-medium text-slate-600 mb-1">เลือกไฟล์จากอุปกรณ์คอมพิวเตอร์ของคุณ</label>
-                                <input type="file" id="form-file-input" class="w-full p-2 text-slate-500 border border-slate-200 border-dashed rounded-xl bg-slate-50">
+                                <label class="block text-xs font-medium text-slate-400 mb-1">เลือกไฟล์จากอุปกรณ์คอมพิวเตอร์ของคุณ</label>
+                                <input type="file" id="form-file-input" class="w-full p-2 text-slate-400 border border-slate-800 border-dashed rounded-xl bg-slate-950">
                             </div>
 
-                            <div class="pt-4 border-t border-slate-100 flex justify-end gap-2">
-                                <button type="button" onclick="closeUploadModal()" class="px-4 py-2 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl font-medium">ยกเลิก</button>
+                            <div class="pt-4 border-t border-slate-800 flex justify-end gap-2">
+                                <button type="button" onclick="closeUploadModal()" class="px-4 py-2 text-slate-300 bg-slate-800 hover:bg-slate-700 rounded-xl font-medium">ยกเลิก</button>
                                 <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium">บันทึกส่งข้อมูล</button>
                             </div>
                         </form>
@@ -794,7 +1001,7 @@
             
             let indHtml = '';
             Object.keys(partMeta.indicators).forEach(ind => { indHtml += `<option value="${ind}">${ind}</option>`; });
-            selectInd.innerHTML = indHtml ? indHtml : `<option value="">เอกสารสำคัญโครงสร้างโรงเรียน</option>`;
+            selectInd.innerHTML = indHtml ? indHtml : `<option value="เอกสารสำคัญ">เอกสารสำคัญโครงสร้างโรงเรียน</option>`;
             
             updateFormItemTypes();
             modal.classList.remove('hidden');
@@ -912,7 +1119,6 @@
         // --- AUTOMATED INITIALIZER SYSTEM ---
         window.addEventListener('DOMContentLoaded', () => {
             setupNavigation();
-            // แก้ไขจุดบกพร่อง: สั่งรัน Router หน้าจอปลายทางแบบเจาะจงทันทีเมื่อโหลดโดมเสร็จสิ้น
             navigateTo(currentView);
         });
     </script>
