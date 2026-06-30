@@ -4,11 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบประกันคุณภาพการศึกษา - โรงเรียนทนาพรวิทยา</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Kanit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght=300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
@@ -57,11 +61,14 @@
 </head>
 <body class="bg-mesh text-slate-100 min-h-screen flex flex-col relative overflow-x-hidden no-select">
 
+    <!-- ตกแต่งพื้นหลังด้วยวงกลมเรืองแสงพาสเทล (Blurry Blobs) -->
     <div class="blur-blob w-96 h-96 bg-blue-400 top-10 left-[-10%] animate-pulse" style="animation-duration: 8s;"></div>
     <div class="blur-blob w-[500px] h-[500px] bg-indigo-500 bottom-10 right-[-10%] animate-pulse" style="animation-duration: 12s;"></div>
 
+    <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2"></div>
 
+    <!-- LOADER SCREEN -->
     <div id="global-loader" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
         <div class="flex flex-col items-center">
             <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
@@ -69,6 +76,7 @@
         </div>
     </div>
 
+    <!-- CONFIRMATION MODAL -->
     <div id="confirm-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl slide-up">
             <h3 class="text-lg font-semibold text-white" id="confirm-title">ยืนยันการดำเนินการ</h3>
@@ -80,8 +88,10 @@
         </div>
     </div>
 
+    <!-- APPLICATION CONTAINER -->
     <div id="app-root" class="w-full flex-1 flex flex-col relative z-10">
         
+        <!-- SIDEBAR (DESKTOP) -->
         <aside id="sidebar" class="hidden w-72 bg-slate-900/60 border-r border-slate-800 h-screen sticky top-0 flex-shrink-0 z-30 flex-col">
             <div class="p-6 border-b border-slate-800 flex items-center gap-3 bg-slate-950/40 backdrop-blur-sm">
                 <img src="logo.png" alt="โลโก้โรงเรียนทนาพรวิทยา" class="w-10 h-10 object-contain rounded-xl shadow-sm" onerror="this.onerror=null; this.src='https://placehold.co/40x40?text=TN';">
@@ -107,8 +117,10 @@
             </div>
         </aside>
 
+        <!-- MAIN DISPLAY WORKSPACE -->
         <main id="main-workspace" class="w-full flex flex-col flex-1">
             
+            <!-- MOBILE HEADER -->
             <header id="mobile-header" class="hidden bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-30 flex items-center justify-between">
                 <div>
                     <span class="font-bold text-white text-sm">โรงเรียนทนาพรวิทยา</span>
@@ -118,9 +130,12 @@
                 </div>
             </header>
 
+            <!-- CONTENT INNER AREA -->
             <div id="content-area" class="w-full p-4 md:p-8 flex-1">
-                </div>
+                <!-- สลับหน้าด้วย JS -->
+            </div>
 
+            <!-- FOOTER -->
             <footer class="w-full py-4 px-6 border-t border-white/10 bg-slate-950/20 text-center relative z-10">
                 <p class="text-[11px] md:text-xs text-blue-200/50 font-medium tracking-wide">
                     © 2026 โรงเรียนทนาพรวิทยา. ระบบสารสนเทศเพื่อการประกันคุณภาพการศึกษา พัฒนาโดย นายเจษฎากร เชิดฉาย
@@ -128,9 +143,11 @@
             </footer>
         </main>
 
+        <!-- BOTTOM NAV (MOBILE) -->
         <nav id="bottom-nav" class="hidden md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 px-2 py-1 justify-around items-center z-40 shadow-xl">
         </nav>
 
+        <!-- ADMIN EXTRAPANEL (MOBILE) -->
         <div id="admin-mobile-panel" class="fixed inset-x-0 bottom-16 bg-slate-900 border-t border-slate-800 shadow-2xl rounded-t-2xl p-4 z-40 transform translate-y-full transition-transform duration-300 hidden">
             <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
                 <span class="font-bold text-white text-sm flex items-center gap-1"><i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i> เมนูแอดมินจัดการหลังบ้าน</span>
@@ -141,6 +158,7 @@
 
     </div>
 
+    <!-- SUPABASE & CORE JAVASCRIPT -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // --- 🔐 ระบบป้องกันการคลิกขวาและส่องโค้ด (Anti-Inspect & Copy) ---
@@ -153,14 +171,12 @@
 
         // 2. บล็อกปุ่มคีย์บอร์ดที่เข้าถึงซอร์สโค้ด (Disable Shortcut Keys)
         document.addEventListener('keydown', function (e) {
-            // บล็อก F12
             if (e.key === 'F12') {
                 e.preventDefault();
                 showToast("🔒 พบบันทึกการเรียกใช้โหมดผู้พัฒนาโปรแกรม", "warning");
                 return false;
             }
             
-            // บล็อก Ctrl+Shift+I / Cmd+Alt+I (Inspect), Ctrl+Shift+J (Console), Ctrl+U (View Source), Ctrl+S (Save Page)
             const isCtrlOrCmd = e.ctrlKey || e.metaKey;
             const isShift = e.shiftKey;
             
@@ -184,7 +200,6 @@
         let evidenceDataCache = [];
         let dashboardChartInstance = null;
 
-        // โครงสร้างมาตรฐานประกันคุณภาพ (อัปเดตชื่อหัวข้อหลักสูตรใหม่)
         const modulesStructure = {
             part1: {
                 title: "มาตรฐานที่ 1 ผลลัพธ์ของการเรียนรู้",
@@ -246,7 +261,6 @@
             }
         };
 
-        // ฟังก์ชันอัปเดตเวลาแบบ Real-time
         function updateRealTimeClock() {
             const clockEl = document.getElementById('realtime-clock');
             if (!clockEl) return;
@@ -307,7 +321,6 @@
             }
         }
 
-        // --- SETUP NAVIGATION LAYOUT CONFIGURATION ---
         function setupNavigation() {
             const appRoot = document.getElementById('app-root');
             const mainWorkspace = document.getElementById('main-workspace');
@@ -359,7 +372,6 @@
                 { id: 'part4', label: 'เอกสารสำคัญอื่นๆ', icon: 'folder-heart' }
             ];
 
-            // Desktop Sidebar Menu Generator
             let dHtml = '';
             coreMenus.forEach(m => {
                 const activeCls = currentView === m.id 
@@ -371,7 +383,6 @@
             });
             dNav.innerHTML = dHtml;
 
-            // Mobile Bottom Menu Generator
             let mHtml = '';
             const mobileVisibleMenus = coreMenus.slice(0, 4);
             mobileVisibleMenus.forEach(m => {
@@ -413,7 +424,6 @@
             lucide.createIcons();
         }
 
-        // --- SPA NAVIGATION ROUTER CONTROLLER ---
         async function navigateTo(viewId) {
             currentView = viewId;
             setupNavigation();
@@ -448,7 +458,6 @@
             });
         }
 
-        // --- IMAGE COMPRESSION ---
         function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -472,7 +481,6 @@
             });
         }
 
-        // --- SUPABASE DATABASE ACCESS ---
         async function fetchEvidences() {
             try {
                 const { data, error } = await clientAppSb
@@ -486,7 +494,6 @@
             }
         }
 
-        // --- CORE VIEW RENDERING ENGINES ---
         function renderLandingPage() {
             document.getElementById('content-area').innerHTML = `
                 <div class="max-w-4xl mx-auto py-8 md:py-16 px-4 flex flex-col items-center text-center relative z-10 fade-in">
@@ -520,7 +527,7 @@
                         
                         <div class="mt-10 flex flex-col sm:flex-row justify-center gap-3">
                             <button onclick="navigateTo('login')" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl shadow-lg shadow-blue-950/50 hover:shadow-xl hover:shadow-blue-500/20 transform hover:-translate-y-0.5 transition-all duration-200 font-semibold text-sm flex items-center justify-center gap-2 group">
-                                <i data-lucide="log-in" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i> เข้าสู่ระบบเพื่อใช้งาน
+                                <i data-lucide="log-out" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i> เข้าสู่ระบบเพื่อใช้งาน
                             </button>
                             <button onclick="handleGuestDirectLogin()" class="w-full sm:w-auto px-6 py-3.5 bg-slate-800/80 hover:bg-slate-700/80 text-blue-400 border border-slate-700 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2">
                                 <i data-lucide="eye" class="w-4 h-4"></i> เข้าชมระบบ (Guest)
@@ -561,7 +568,6 @@
             lucide.createIcons();
         }
 
-        // หน้าล็อกอิน
         function renderLoginPage() {
             document.getElementById('content-area').innerHTML = `
                 <div class="max-w-md mx-auto my-12 p-8 bg-slate-900 rounded-2xl border border-slate-800 shadow-2xl slide-up">
@@ -655,7 +661,6 @@
             }
         }
 
-        // หน้าสรุปรายงานแผงควบคุม (EXECUTIVE DASHBOARD VIEW)
         function renderDashboard() {
             let stats = { doc: 0, pdf: 0, jpg: 0, png: 0, url: 0, drive: 0 };
             let partStats = { part1: 0, part2: 0, part3: 0, part4: 0 };
@@ -839,7 +844,7 @@
                                 </div>
                                 <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
                                     <span class="font-medium text-slate-300">มาตรฐานที่ 3</span>
-                                    <span class="bg-indigo-950 text-indigo-300 font-bold px-2.5 py-0.5 rounded-full">${partStats.part3} ราย长</span>
+                                    <span class="bg-indigo-950 text-indigo-300 font-bold px-2.5 py-0.5 rounded-full">${partStats.part3} รายการ</span>
                                 </div>
                                 <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
                                     <span class="font-medium text-slate-300">เอกสารสำคัญ และหลักฐานอื่นๆ</span>
@@ -861,10 +866,11 @@
                         </div>
                     </div>
 
+                    <!-- 🛠️ แก้ไขเฉพาะจุดที่ 1 เรียบร้อยแล้ว (จากเดิม "ข้อมูลประกอบการพิจารณา") -->
                     <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-sm space-y-4">
                         <div class="border-b border-slate-800 pb-2">
                             <h3 class="text-sm font-bold text-slate-200 flex items-center gap-1.5">
-                                <i data-lucide="folder-heart" class="w-4 h-4 text-pink-400"></i> ข้อมูลประกอบการพิจารณา
+                                <i data-lucide="folder-heart" class="w-4 h-4 text-pink-400"></i> เอกสารสำคัญ และหลักฐานอื่นๆ
                             </h3>
                             <p class="text-[11px] text-slate-400 mt-0.5 leading-relaxed">แผนพัฒนาคุณภาพการจัดการศึกษา แแผนปฏิบัติการประจำปี หลักสูตรสถานศึกษา มาตรฐานการศึกษาและค่าเป้าหมายความสำเร็จ รายงานผลการประเมินตนเอง (SAR) ผลการประเมินคุณภาพภายนอก (สมศ.) และเอกสารที่เกี่ยวข้องอื่นๆ</p>
                         </div>
@@ -902,7 +908,6 @@
             });
         }
 
-        // --- หน้าตารางจัดการเอกสารแยกส่วน ---
         let activePartKey = '';
         let searchQuery = '';
 
@@ -1016,6 +1021,7 @@
                     </div>
                 </div>
 
+                <!-- FORM UPLOAD MODAL -->
                 <div id="upload-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto slide-up">
                         <div class="flex justify-between items-center pb-3 border-b border-slate-800">
@@ -1099,7 +1105,6 @@
             document.getElementById('upload-form').reset();
         }
 
-        // --- ACTION PROCESSING INTERSECTIONS ---
         function updateFormItemTypes() {
             const partMeta = modulesStructure[activePartKey];
             const selectIndValue = document.getElementById('form-indicator').value;
@@ -1203,7 +1208,6 @@
             });
         }
 
-        // --- AUTOMATED INITIALIZER SYSTEM ---
         window.addEventListener('DOMContentLoaded', () => {
             setupNavigation();
             navigateTo(currentView);
