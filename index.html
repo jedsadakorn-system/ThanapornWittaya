@@ -88,7 +88,7 @@
             .print-table th {
                 background-color: #f1f5f9 !important;
                 font-weight: bold !important;
-                text-align: center !important; /* บังคับให้หัวตารางกึ่งกลางตอนสั่งพิมพ์ */
+                text-align: center !important;
             }
             .print-title {
                 color: black !important;
@@ -126,7 +126,7 @@
 
     <div id="app-root" class="w-full flex-1 flex flex-col relative z-10">
         
-        <aside id="sidebar" class="hidden w-72 bg-slate-900/60 border-r border-slate-800 h-screen sticky top-0 flex-shrink-0 z-30 flex-col">
+        <aside id="sidebar" class="hidden w-72 bg-slate-950 border-r border-slate-800 h-screen sticky top-0 flex-shrink-0 z-30 flex-col">
             <div class="p-6 border-b border-slate-800 flex items-center gap-3 bg-slate-950/40 backdrop-blur-sm">
                 <img src="logo.png" alt="โลโก้โรงเรียนทนาพรวิทยา" class="w-10 h-10 object-contain rounded-xl shadow-sm" onerror="this.onerror=null; this.src='https://placehold.co/40x40?text=TN';">
                 <div>
@@ -187,7 +187,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // --- 🔐 ระบบป้องกันการคลิกขวาและส่องโค้ด (Anti-Inspect & Copy) ---
+        // --- 🔐 ระบบป้องกันการคลิกขวาและส่องโค้ด ---
         document.addEventListener('contextmenu', function (e) {
             e.preventDefault();
             showToast("🔒 ไม่อนุญาตให้ใช้งานคลิกขวาบนระบบนี้เพื่อความปลอดภัย", "warning");
@@ -220,6 +220,7 @@
         let evidenceDataCache = [];
         let dashboardChartInstance = null;
         let selectedReportYear = ''; 
+        let editingEvidenceId = null; // เก็บไอดีแถวที่กำลังทำการแก้ไขข้อมูล (ถ้าเป็น null แปลว่าสร้างใหม่)
 
         const modulesStructure = {
             part1: {
@@ -1029,9 +1030,10 @@
                             </td>
                             <td class="p-4 text-center text-slate-400 text-xs">${item.created_by || 'Staff'}</td>
                             <td class="p-4 text-right space-x-1 whitespace-nowrap">
-                                <a href="${item.source_url}" target="_blank" class="inline-flex items-center justify-center p-2 text-indigo-400 hover:bg-slate-800 rounded-lg transition"><i data-lucide="eye" class="w-4 h-4"></i></a>
+                                <a href="${item.source_url}" target="_blank" class="inline-flex items-center justify-center p-2 text-indigo-400 hover:bg-slate-800 rounded-lg transition" title="เปิดดูไฟล์ข้อมูล"><i data-lucide="eye" class="w-4 h-4"></i></a>
                                 ${canManage ? `
-                                    <button onclick="deleteEvidenceItem(${item.id})" class="inline-flex items-center justify-center p-2 text-red-400 hover:bg-slate-800 rounded-lg transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                    <button onclick="openEditModal(${item.id})" class="inline-flex items-center justify-center p-2 text-amber-500 hover:bg-slate-800 rounded-lg transition" title="แก้ไข/เปลี่ยนไฟล์อัปโหลดใหม่"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                                    <button onclick="deleteEvidenceItem(${item.id})" class="inline-flex items-center justify-center p-2 text-red-400 hover:bg-slate-800 rounded-lg transition" title="ลบข้อมูลถาวร"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                 ` : `<button disabled class="p-2 text-slate-600/40 cursor-not-allowed"><i data-lucide="lock" class="w-4 h-4"></i></button>`}
                             </td>
                         </tr>
@@ -1049,7 +1051,7 @@
                 <div id="upload-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto slide-up">
                         <div class="flex justify-between items-center pb-3 border-b border-slate-800">
-                            <h3 class="text-sm font-bold text-white flex items-center gap-1.5"><i data-lucide="file-plus" class="text-indigo-400 w-4 h-4"></i> เพิ่มข้อมูลหลักฐาน</h3>
+                            <h3 id="modal-form-title" class="text-sm font-bold text-white flex items-center gap-1.5"><i data-lucide="file-plus" class="text-indigo-400 w-4 h-4"></i> เพิ่มข้อมูลหลักฐาน</h3>
                             <button type="button" onclick="closeUploadModal()" class="text-slate-400 hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
                         </div>
                         <form id="upload-form" onsubmit="handleFormSubmit(event)" class="space-y-4 mt-4 text-xs md:text-sm">
@@ -1101,8 +1103,9 @@
                             </div>
 
                             <div id="src-file-wrapper" class="hidden">
-                                <label class="block text-xs font-medium text-slate-400 mb-1">เลือกไฟล์จากอุปกรณ์คอมพิวเตอร์ของคุณ</label>
+                                <label id="file-label-text" class="block text-xs font-medium text-slate-400 mb-1">เลือกไฟล์จากอุปกรณ์คอมพิวเตอร์ของคุณ</label>
                                 <input type="file" id="form-file-input" class="w-full p-2 text-slate-400 border border-slate-800 border-dashed rounded-xl bg-slate-950">
+                                <p id="edit-file-notice" class="text-[11px] text-amber-400 mt-1 hidden">*หากไม่ต้องการเปลี่ยนไฟล์แนบเดิม ให้ปล่อยว่างช่องนี้ไว้ได้ครับ</p>
                             </div>
 
                             <div class="pt-4 border-t border-slate-800 flex justify-end gap-2">
@@ -1118,7 +1121,6 @@
             lucide.createIcons();
         }
 
-        /* 📊 ฟังก์ชันประมวลผลและวาดตารางหน้า "รายงานสรุป" ฉบับปรับปรุงตามสั่ง */
         function renderSummaryReportPage() {
             const yearsList = ['2566', '2567', '2568', '2569', '2570', '2571', '2572', '2573', '2574', '2575'];
             
@@ -1219,7 +1221,6 @@
                         seenInd[iKey] = true;
                     }
 
-                    // เนื้อหาชื่อไฟล์เอกสาร (ชิดซ้ายปกติเพื่อความเป็นระเบียบในการอ่านชื่อยาวๆ)
                     html += `<td class="p-3 border border-slate-800 text-slate-100 font-medium print:text-black">
                         <a href="${item.source_url}" target="_blank" class="hover:underline text-indigo-400 hover:text-indigo-300 print:text-black print:no-underline">${item.title}</a>
                     </td>`;
@@ -1261,16 +1262,70 @@
         function clearSearchFilter() { searchQuery = ''; renderModulePart(activePartKey); }
 
         function openUploadModal() {
+            editingEvidenceId = null; 
+            
             const partMeta = modulesStructure[activePartKey];
             const modal = document.getElementById('upload-modal');
             const selectInd = document.getElementById('form-indicator');
+            const modalTitle = document.getElementById('modal-form-title');
+            const fileNotice = document.getElementById('edit-file-notice');
+
             if(!modal || !selectInd) return;
             
+            if(modalTitle) modalTitle.innerHTML = `<i data-lucide="file-plus" class="text-indigo-400 w-4 h-4"></i> เพิ่มข้อมูลหลักฐาน`;
+            if(fileNotice) fileNotice.classList.add('hidden');
+
             let indHtml = '';
             Object.keys(partMeta.indicators).forEach(ind => { indHtml += `<option value="${ind}">${ind}</option>`; });
             selectInd.innerHTML = indHtml ? indHtml : `<option value="เอกสารสำคัญ">เอกสารสำคัญโครงสร้างโรงเรียน</option>`;
             
             updateFormItemTypes();
+            
+            document.getElementById('form-file-input').required = false;
+
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function openEditModal(itemId) {
+            editingEvidenceId = itemId;
+            const item = evidenceDataCache.find(e => e.id === itemId);
+            if (!item) return;
+
+            const partMeta = modulesStructure[activePartKey];
+            const modal = document.getElementById('upload-modal');
+            const selectInd = document.getElementById('form-indicator');
+            const modalTitle = document.getElementById('modal-form-title');
+            const fileNotice = document.getElementById('edit-file-notice');
+
+            if (!modal || !selectInd) return;
+
+            if(modalTitle) modalTitle.innerHTML = `<i data-lucide="edit-3" class="text-amber-400 w-4 h-4"></i> แก้ไขข้อมูลหลักฐาน / อัปโหลดไฟล์ใหม่`;
+            if(fileNotice) fileNotice.classList.remove('hidden');
+
+            let indHtml = '';
+            Object.keys(partMeta.indicators).forEach(ind => { indHtml += `<option value="${ind}">${ind}</option>`; });
+            selectInd.innerHTML = indHtml ? indHtml : `<option value="เอกสารสำคัญ">เอกสารสำคัญโครงสร้างโรงเรียน</option>`;
+            
+            document.getElementById('form-academic-year').value = item.academic_year || '';
+            document.getElementById('form-indicator').value = item.indicator_title;
+            
+            updateFormItemTypes();
+            document.getElementById('form-item-type').value = item.item_type;
+            
+            document.getElementById('form-title').value = item.title;
+            document.getElementById('form-type').value = item.type;
+            
+            toggleFormUploadSource();
+
+            if (['url', 'drive'].includes(item.type)) {
+                document.getElementById('form-source-url').value = item.source_url;
+                document.getElementById('form-file-input').required = false;
+            } else {
+                document.getElementById('form-file-input').required = false;
+                document.getElementById('form-source-url').value = '';
+            }
+
             modal.classList.remove('hidden');
             lucide.createIcons();
         }
@@ -1280,6 +1335,7 @@
             const form = document.getElementById('upload-form');
             if(modal) modal.classList.add('hidden');
             if(form) form.reset();
+            editingEvidenceId = null;
         }
 
         function updateFormItemTypes() {
@@ -1306,7 +1362,8 @@
                 urlInput.required = true; fileInput.required = false;
             } else {
                 linkWrap.classList.add('hidden'); fileWrap.classList.remove('hidden');
-                urlInput.required = false; fileInput.required = true;
+                urlInput.required = false;
+                fileInput.required = (editingEvidenceId === null);
             }
         }
 
@@ -1320,7 +1377,7 @@
             const title = document.getElementById('form-title').value.trim();
             const type = document.getElementById('form-type').value;
             
-            toggleLoader(true, "กำลังเชื่อมโยงข้อมูลคลาวด์...");
+            toggleLoader(true, editingEvidenceId ? "กำลังอัปเดตชุดข้อมูลร่องรอย..." : "กำลังเชื่อมโยงข้อมูลคลาวด์...");
             let finalSourceUrl = '';
 
             try {
@@ -1329,51 +1386,77 @@
                 } else {
                     const fileInput = document.getElementById('form-file-input');
                     const rawFile = fileInput ? fileInput.files[0] : null;
-                    if (!rawFile) throw new Error("กรุณาเลือกไฟล์เอกสารหรือรูปภาพแนบระบบ");
-
-                    let uploadedBlob = rawFile;
-                    if (['jpg', 'png'].includes(type)) { uploadedBlob = await compressImage(rawFile); }
-
-                    const fileExt = type === 'jpg' ? 'jpg' : (type === 'png' ? 'png' : rawFile.name.split('.').pop());
-                    const uniqueFileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
                     
-                    const { data: uploadData, error: uploadErr } = await clientAppSb.storage
-                        .from('img')
-                        .upload(uniqueFileName, uploadedBlob, { contentType: uploadedBlob.type });
+                    if (!rawFile) {
+                        if (editingEvidenceId) {
+                            const oldItem = evidenceDataCache.find(x => x.id === editingEvidenceId);
+                            if(oldItem && ['doc','pdf','jpg','png'].includes(oldItem.type)) {
+                                finalSourceUrl = oldItem.source_url;
+                            } else {
+                                throw new Error("รูปแบบไฟล์ไม่สอดคล้อง กรุณาอัปโหลดไฟล์ใหม่อีกครั้ง");
+                            }
+                        } else {
+                            throw new Error("กรุณาเลือกไฟล์เอกสารหรือรูปภาพแนบระบบ");
+                        }
+                    } else {
+                        let uploadedBlob = rawFile;
+                        if (['jpg', 'png'].includes(type)) { uploadedBlob = await compressImage(rawFile); }
 
-                    if (uploadErr) throw uploadErr;
+                        const fileExt = type === 'jpg' ? 'jpg' : (type === 'png' ? 'png' : rawFile.name.split('.').pop());
+                        const uniqueFileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+                        
+                        const { data: uploadData, error: uploadErr } = await clientAppSb.storage
+                            .from('img')
+                            .upload(uniqueFileName, uploadedBlob, { contentType: uploadedBlob.type });
 
-                    const { data: urlData } = clientAppSb.storage.from('img').getPublicUrl(uniqueFileName);
-                    finalSourceUrl = urlData.publicUrl;
+                        if (uploadErr) throw uploadErr;
+
+                        const { data: urlData } = clientAppSb.storage.from('img').getPublicUrl(uniqueFileName);
+                        finalSourceUrl = urlData.publicUrl;
+                    }
                 }
 
-                const { error: dbErr } = await clientAppSb
-                    .from('qa_evidences')
-                    .insert([{
-                        module_part: partNum,
-                        standard_title: modulesStructure[activePartKey].title,
-                        indicator_title: indTitle,
-                        item_type: itemType,
-                        title: title,
-                        type: type,
-                        source_url: finalSourceUrl,
-                        created_by: currentUser.username,
-                        academic_year: academicYear
-                    }]);
+                if (editingEvidenceId) {
+                    const { error: dbUpdateErr } = await clientAppSb
+                        .from('qa_evidences')
+                        .update({
+                            academic_year: academicYear,
+                            indicator_title: indTitle,
+                            item_type: itemType,
+                            title: title,
+                            type: type,
+                            source_url: finalSourceUrl
+                        })
+                        .eq('id', editingEvidenceId);
 
-                if (dbErr) {
-                    console.error("Supabase Database Error Details:", dbErr);
-                    throw new Error(dbErr.message);
+                    if (dbUpdateErr) throw new Error(dbUpdateErr.message);
+                    showToast("แก้ไขและปรับปรุงสารสนเทศเรียบร้อยแล้ว", "success");
+                } else {
+                    const { error: dbInsertErr } = await clientAppSb
+                        .from('qa_evidences')
+                        .insert([{
+                            module_part: partNum,
+                            standard_title: modulesStructure[activePartKey].title,
+                            indicator_title: indTitle,
+                            item_type: itemType,
+                            title: title,
+                            type: type,
+                            source_url: finalSourceUrl,
+                            created_by: currentUser.username,
+                            academic_year: academicYear
+                        }]);
+
+                    if (dbInsertErr) throw new Error(dbInsertErr.message);
+                    showToast("บันทึกสารสนเทศร่องรอยสำเร็จ", "success");
                 }
 
-                showToast("บันทึกสารสนเทศร่องรอยสำเร็จ", "success");
                 closeUploadModal();
                 await fetchEvidences();
                 renderModulePart(activePartKey);
 
             } catch (err) {
-                console.error("Form Submit General Error:", err);
-                showToast(err.message || "เกิดอุปสรรคข้อผิดพลาดในการอัปโหลด", "danger");
+                console.error("Form Submit Error:", err);
+                showToast(err.message || "เกิดอุปสรรคข้อผิดพลาดในการบันทึกข้อมูล", "danger");
             } finally {
                 toggleLoader(false);
             }
