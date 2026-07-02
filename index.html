@@ -4,15 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบประกันคุณภาพการศึกษา - โรงเรียนทนาพรวิทยา</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts Kanit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght=300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
@@ -57,18 +53,59 @@
             -ms-user-select: none;
             user-select: none;
         }
+
+        /* 🖨️ CSS สำหรับควบคุมการจัดหน้าพิมพ์รายงาน A4 แนวนอน */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 15mm;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            #sidebar, #bottom-nav, #mobile-header, .no-print, button, select, .blur-blob {
+                display: none !important;
+            }
+            #main-workspace {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .print-table {
+                border: 1px solid #1e293b !important;
+                color: black !important;
+                width: 100% !important;
+            }
+            .print-table th, .print-table td {
+                border: 1px solid #1e293b !important;
+                color: black !important;
+                background: transparent !important;
+                padding: 6px 8px !important;
+                font-size: 12px !important;
+            }
+            .print-table th {
+                background-color: #f1f5f9 !important;
+                font-weight: bold !important;
+                text-align: center !important; /* บังคับให้หัวตารางกึ่งกลางตอนสั่งพิมพ์ */
+            }
+            .print-title {
+                color: black !important;
+                font-size: 18px !important;
+                margin-bottom: 5px !important;
+                text-align: center !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-mesh text-slate-100 min-h-screen flex flex-col relative overflow-x-hidden no-select">
 
-    <!-- ตกแต่งพื้นหลังด้วยวงกลมเรืองแสงพาสเทล (Blurry Blobs) -->
     <div class="blur-blob w-96 h-96 bg-blue-400 top-10 left-[-10%] animate-pulse" style="animation-duration: 8s;"></div>
     <div class="blur-blob w-[500px] h-[500px] bg-indigo-500 bottom-10 right-[-10%] animate-pulse" style="animation-duration: 12s;"></div>
 
-    <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2"></div>
 
-    <!-- LOADER SCREEN -->
     <div id="global-loader" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
         <div class="flex flex-col items-center">
             <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
@@ -76,7 +113,6 @@
         </div>
     </div>
 
-    <!-- CONFIRMATION MODAL -->
     <div id="confirm-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl slide-up">
             <h3 class="text-lg font-semibold text-white" id="confirm-title">ยืนยันการดำเนินการ</h3>
@@ -88,10 +124,8 @@
         </div>
     </div>
 
-    <!-- APPLICATION CONTAINER -->
     <div id="app-root" class="w-full flex-1 flex flex-col relative z-10">
         
-        <!-- SIDEBAR (DESKTOP) -->
         <aside id="sidebar" class="hidden w-72 bg-slate-900/60 border-r border-slate-800 h-screen sticky top-0 flex-shrink-0 z-30 flex-col">
             <div class="p-6 border-b border-slate-800 flex items-center gap-3 bg-slate-950/40 backdrop-blur-sm">
                 <img src="logo.png" alt="โลโก้โรงเรียนทนาพรวิทยา" class="w-10 h-10 object-contain rounded-xl shadow-sm" onerror="this.onerror=null; this.src='https://placehold.co/40x40?text=TN';">
@@ -117,10 +151,8 @@
             </div>
         </aside>
 
-        <!-- MAIN DISPLAY WORKSPACE -->
         <main id="main-workspace" class="w-full flex flex-col flex-1">
             
-            <!-- MOBILE HEADER -->
             <header id="mobile-header" class="hidden bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-30 flex items-center justify-between">
                 <div>
                     <span class="font-bold text-white text-sm">โรงเรียนทนาพรวิทยา</span>
@@ -130,24 +162,19 @@
                 </div>
             </header>
 
-            <!-- CONTENT INNER AREA -->
             <div id="content-area" class="w-full p-4 md:p-8 flex-1">
-                <!-- สลับหน้าด้วย JS -->
-            </div>
+                </div>
 
-            <!-- FOOTER -->
-            <footer class="w-full py-4 px-6 border-t border-white/10 bg-slate-950/20 text-center relative z-10">
+            <footer class="w-full py-4 px-6 border-t border-white/10 bg-slate-950/20 text-center relative z-10 no-print">
                 <p class="text-[11px] md:text-xs text-blue-200/50 font-medium tracking-wide">
                     © 2026 โรงเรียนทนาพรวิทยา. ระบบสารสนเทศเพื่อการประกันคุณภาพการศึกษา พัฒนาโดย นายเจษฎากร เชิดฉาย
                 </p>
             </footer>
         </main>
 
-        <!-- BOTTOM NAV (MOBILE) -->
         <nav id="bottom-nav" class="hidden md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 px-2 py-1 justify-around items-center z-40 shadow-xl">
         </nav>
 
-        <!-- ADMIN EXTRAPANEL (MOBILE) -->
         <div id="admin-mobile-panel" class="fixed inset-x-0 bottom-16 bg-slate-900 border-t border-slate-800 shadow-2xl rounded-t-2xl p-4 z-40 transform translate-y-full transition-transform duration-300 hidden">
             <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
                 <span class="font-bold text-white text-sm flex items-center gap-1"><i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i> เมนูแอดมินจัดการหลังบ้าน</span>
@@ -158,31 +185,24 @@
 
     </div>
 
-    <!-- SUPABASE & CORE JAVASCRIPT -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // --- 🔐 ระบบป้องกันการคลิกขวาและส่องโค้ด (Anti-Inspect & Copy) ---
-        
-        // 1. บล็อกการคลิกขวา (Disable Right Click)
         document.addEventListener('contextmenu', function (e) {
             e.preventDefault();
             showToast("🔒 ไม่อนุญาตให้ใช้งานคลิกขวาบนระบบนี้เพื่อความปลอดภัย", "warning");
         });
 
-        // 2. บล็อกปุ่มคีย์บอร์ดที่เข้าถึงซอร์สโค้ด (Disable Shortcut Keys)
         document.addEventListener('keydown', function (e) {
             if (e.key === 'F12') {
                 e.preventDefault();
                 showToast("🔒 พบบันทึกการเรียกใช้โหมดผู้พัฒนาโปรแกรม", "warning");
                 return false;
             }
-            
             const isCtrlOrCmd = e.ctrlKey || e.metaKey;
             const isShift = e.shiftKey;
-            
             if (isCtrlOrCmd) {
-                if ((isShift && ['I', 'J', 'i', 'j'].includes(e.key)) || 
-                    ['U', 'u', 'S', 's'].includes(e.key)) {
+                if ((isShift && ['I', 'J', 'i', 'j'].includes(e.key)) || ['U', 'u', 'S', 's'].includes(e.key)) {
                     e.preventDefault();
                     showToast("🔒 ฟังก์ชันนี้ถูกจำกัดสิทธิ์การใช้งานเพื่อความปลอดภัยของข้อมูล", "warning");
                     return false;
@@ -199,6 +219,7 @@
         let currentView = currentUser ? 'dashboard' : 'landing';
         let evidenceDataCache = [];
         let dashboardChartInstance = null;
+        let selectedReportYear = ''; 
 
         const modulesStructure = {
             part1: {
@@ -213,7 +234,7 @@
                     ],
                     "ตัวชี้วัดที่ 1.2 ผู้เรียนมีคุณลักษณะที่พึงประสงค์ตามหลักสูตรสถานศึกษา": [
                         "ผลการประเมินคุณลักษณะอันพึงประสงค์ตามหลักสูตรสถานศึกษา", "แฟ้มสะสมผลงานผู้เรียน (Portfolio)",
-                        "ผลการประเมินสมรรถนะความสามารถในการใช้ทักษะชีวิต", "ผลการประเมินพฤติกรรมผู้เรียน (SDQ)",
+                        "ผลการประเมินสมรรถนะความสามารถในการใช้ทักษะชีวิต", "ผลการประเมินพฤทีตกรรมผู้เรียน (SDQ)",
                         "ชิ้นงาน ผลงาน การนำเสนอผลงานของผู้เรียน", "รางวัลต่าง ๆ ของผู้เรียน",
                         "โครงการ กิจกรรมที่เกี่ยวข้องในการพัฒนาคุณลักษณะที่พึงประสงค์", "อัลบั้มภาพและคลิปวิดีโอที่เกี่ยวข้อง"
                     ],
@@ -264,32 +285,29 @@
         function updateRealTimeClock() {
             const clockEl = document.getElementById('realtime-clock');
             if (!clockEl) return;
-            
             const now = new Date();
             const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
             const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-            
-            const formattedDate = now.toLocaleDateString('th-TH', dateOptions);
-            const formattedTime = now.toLocaleTimeString('th-TH', timeOptions);
-            
-            clockEl.innerText = `${formattedDate} ${formattedTime}`;
+            clockEl.innerText = `${now.toLocaleDateString('th-TH', dateOptions)} ${now.toLocaleTimeString('th-TH', timeOptions)}`;
         }
         setInterval(updateRealTimeClock, 1000);
 
         function showToast(msg, type = 'success') {
             const container = document.getElementById('toast-container');
+            if (!container) return;
             const bgMap = { success: 'bg-emerald-600', danger: 'bg-red-600', warning: 'bg-amber-500' };
             const iconMap = { success: 'check-circle', danger: 'alert-triangle', warning: 'alert-circle' };
             const toast = document.createElement('div');
-            toast.className = `${bgMap[type]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 text-xs md:text-sm font-medium fade-in min-w-[240px]`;
-            toast.innerHTML = `<i data-lucide="${iconMap[type]}" class="w-4 h-4 flex-shrink-0"></i> <span>${msg}</span>`;
+            toast.className = `${bgMap[type] || 'bg-slate-700'} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 text-xs md:text-sm font-medium fade-in min-w-[240px]`;
+            toast.innerHTML = `<i data-lucide="${iconMap[type] || 'info'}" class="w-4 h-4 flex-shrink-0"></i> <span>${msg}</span>`;
             container.appendChild(toast);
             lucide.createIcons();
-            setTimeout(() => { toast.remove(); }, 3000);
+            setTimeout(() => { toast.remove(); }, 4000);
         }
 
         function toggleLoader(show, text = "กำลังประมวลผล...") {
             const loader = document.getElementById('global-loader');
+            if (!loader) return;
             document.getElementById('loader-text').innerText = text;
             if (show) loader.classList.remove('hidden'); else loader.classList.add('hidden');
         }
@@ -312,6 +330,7 @@
 
         function toggleAdminPanel(show) {
             const panel = document.getElementById('admin-mobile-panel');
+            if (!panel) return;
             if (show) {
                 panel.classList.remove('hidden');
                 setTimeout(() => panel.classList.remove('translate-y-full'), 10);
@@ -335,13 +354,11 @@
                 document.body.className = "bg-slate-900 text-slate-100 min-h-screen flex flex-col relative overflow-x-hidden no-select";
                 appRoot.className = "w-full flex-1 flex flex-col md:flex-row"; 
                 mainWorkspace.className = "flex-1 flex flex-col min-w-0 pb-20 md:pb-0"; 
-                
                 sidebar.className = "flex flex-col w-72 bg-slate-950 border-r border-slate-800 h-screen sticky top-0 flex-shrink-0 z-30";
                 mHeader.className = "bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-30 flex items-center justify-between";
                 mNav.className = "md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 px-2 py-1 flex justify-around items-center z-40 shadow-xl";
                 
                 document.getElementById('user-fullname').innerText = currentUser.name;
-                
                 if (currentUser.role === 'admin') {
                     document.getElementById('user-role-badge').innerText = 'ผู้ดูแลระบบ (Admin)';
                 } else if (currentUser.role === 'guest') {
@@ -349,18 +366,16 @@
                 } else {
                     document.getElementById('user-role-badge').innerText = 'คุณครู (Teacher)';
                 }
-                
                 sideLogout.classList.remove('hidden');
                 updateRealTimeClock();
             } else {
                 document.body.className = "bg-mesh text-slate-100 min-h-screen flex flex-col relative overflow-x-hidden no-select";
                 appRoot.className = "w-full flex-1 flex flex-col items-center justify-start";
                 mainWorkspace.className = "w-full flex flex-col flex-1";
-                
                 sidebar.className = "hidden";
                 mHeader.className = "hidden";
                 mNav.className = "hidden";
-                sideLogout.classList.add('hidden');
+                if(sideLogout) sideLogout.classList.add('hidden');
                 return;
             }
 
@@ -369,7 +384,8 @@
                 { id: 'part1', label: 'มาตรฐานที่ 1', icon: 'graduation-cap' },
                 { id: 'part2', label: 'มาตรฐานที่ 2', icon: 'building' },
                 { id: 'part3', label: 'มาตรฐานที่ 3', icon: 'book-open' },
-                { id: 'part4', label: 'เอกสารสำคัญอื่นๆ', icon: 'folder-heart' }
+                { id: 'part4', label: 'เอกสารสำคัญอื่นๆ', icon: 'folder-heart' },
+                { id: 'summary', label: 'รายงานสรุป', icon: 'clipboard-list' }
             ];
 
             let dHtml = '';
@@ -411,9 +427,9 @@
                 </button>`;
                 pGrid.innerHTML = gridHtml;
             } else {
-                mHtml += `<button onclick="navigateTo('part4')" class="flex flex-col items-center justify-center py-1 flex-1 ${currentView === 'part4' ? 'text-indigo-400' : 'text-slate-500'}">
-                    <i data-lucide="folder-heart" class="w-5 h-5"></i>
-                    <span class="text-[10px] mt-0.5">เอกสาร</span>
+                mHtml += `<button onclick="navigateTo('summary')" class="flex flex-col items-center justify-center py-1 flex-1 ${currentView === 'summary' ? 'text-indigo-400' : 'text-slate-500'}">
+                    <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+                    <span class="text-[10px] mt-0.5">รายงาน</span>
                 </button>`;
                 mHtml += `<button onclick="triggerLogout()" class="flex flex-col items-center justify-center py-1 flex-1 text-red-400">
                     <i data-lucide="log-out" class="w-5 h-5"></i>
@@ -444,6 +460,9 @@
             } else if (['part1', 'part2', 'part3', 'part4'].includes(viewId)) {
                 await fetchEvidences();
                 renderModulePart(viewId);
+            } else if (viewId === 'summary') {
+                await fetchEvidences();
+                renderSummaryReportPage();
             }
             toggleLoader(false);
         }
@@ -708,11 +727,13 @@
                             if (['jpg', 'png'].includes(file.type)) iconTag = '<i data-lucide="image" class="w-3 h-3 inline text-amber-400"></i>';
                             if (['url', 'drive'].includes(file.type)) iconTag = '<i data-lucide="link" class="w-3 h-3 inline text-purple-400"></i>';
 
+                            const yearBadge = file.academic_year ? `<span class="text-[9px] text-indigo-400 bg-indigo-950/50 px-1 rounded mr-1">ปี ${file.academic_year}</span>` : '';
+
                             partContentHtml += `
                                 <li class="text-[10px] md:text-xs text-slate-400 flex items-start gap-1.5 hover:text-white transition py-0.5">
                                     <span class="mt-0.5 flex-shrink-0">${iconTag}</span>
                                     <a href="${file.source_url}" target="_blank" class="hover:underline truncate" title="${file.title}">
-                                        ${file.title}
+                                        ${yearBadge}${file.title}
                                     </a>
                                 </li>
                             `;
@@ -738,14 +759,13 @@
             let part4Html = `
                 <div class="bg-slate-950/40 p-5 rounded-2xl border border-slate-800 hover:border-slate-700/50 transition">
                     <h4 class="text-xs md:text-sm font-bold text-indigo-400 border-b border-slate-800 pb-2 mb-3 flex items-center gap-1.5">
-                        <i data-lucide="folder-heart" class="w-4 h-4"></i> ข้อมูลประกอบการพิจารณา
+                        <i data-lucide="folder-heart" class="w-4 h-4"></i> เอกสารสำคัญ และหลักฐานอื่นๆ
                     </h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             `;
 
             Object.keys(part4Meta.indicators).forEach(indicatorKey => {
                 const subCriteriaList = part4Meta.indicators[indicatorKey];
-                
                 subCriteriaList.forEach(criterion => {
                     const criterionFiles = matchedPart4Files.filter(e => e.item_type === criterion);
                     
@@ -766,11 +786,13 @@
                             if (['jpg', 'png'].includes(file.type)) iconTag = '<i data-lucide="image" class="w-3 h-3 inline text-amber-400"></i>';
                             if (['url', 'drive'].includes(file.type)) iconTag = '<i data-lucide="link" class="w-3 h-3 inline text-purple-400"></i>';
 
+                            const yearBadge = file.academic_year ? `<span class="text-[9px] text-pink-400 bg-pink-950/50 px-1 rounded mr-1">ปี ${file.academic_year}</span>` : '';
+
                             part4Html += `
                                 <li class="text-[10px] md:text-xs text-slate-400 flex items-start gap-1.5 hover:text-white transition py-0.5">
                                     <span class="mt-0.5 flex-shrink-0">${iconTag}</span>
                                     <a href="${file.source_url}" target="_blank" class="hover:underline truncate" title="${file.title}">
-                                        ${file.title}
+                                        ${yearBadge}${file.title}
                                     </a>
                                 </li>
                             `;
@@ -866,11 +888,10 @@
                         </div>
                     </div>
 
-                    <!-- 🛠️ แก้ไขเฉพาะจุดที่ 1 เรียบร้อยแล้ว (จากเดิม "ข้อมูลประกอบการพิจารณา") -->
                     <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-sm space-y-4">
                         <div class="border-b border-slate-800 pb-2">
                             <h3 class="text-sm font-bold text-slate-200 flex items-center gap-1.5">
-                                <i data-lucide="folder-heart" class="w-4 h-4 text-pink-400"></i> เอกสารสำคัญ และหลักฐานอื่นๆ
+                                <i data-lucide="folder-heart" class="w-4 h-4 text-pink-400"></i> ข้อมูลประกอบการพิจารณา
                             </h3>
                             <p class="text-[11px] text-slate-400 mt-0.5 leading-relaxed">แผนพัฒนาคุณภาพการจัดการศึกษา แแผนปฏิบัติการประจำปี หลักสูตรสถานศึกษา มาตรฐานการศึกษาและค่าเป้าหมายความสำเร็จ รายงานผลการประเมินตนเอง (SAR) ผลการประเมินคุณภาพภายนอก (สมศ.) และเอกสารที่เกี่ยวข้องอื่นๆ</p>
                         </div>
@@ -882,7 +903,9 @@
             `;
             lucide.createIcons();
             
-            const ctx = document.getElementById('chart-parts').getContext('2d');
+            const canvasObj = document.getElementById('chart-parts');
+            if(!canvasObj) return;
+            const ctx = canvasObj.getContext('2d');
             if(dashboardChartInstance) dashboardChartInstance.destroy();
             
             Chart.defaults.color = '#94a3b8';
@@ -920,7 +943,8 @@
             if (searchQuery) {
                 itemsFiltered = itemsFiltered.filter(e => 
                     e.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                    e.item_type.toLowerCase().includes(searchQuery.toLowerCase())
+                    e.item_type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    (e.academic_year && e.academic_year.includes(searchQuery))
                 );
             }
 
@@ -931,7 +955,7 @@
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
                             <h2 class="text-lg md:text-xl font-bold text-white">${partMeta.title}</h2>
-                            <p class="text-xs text-slate-400 mt-0.5">ตารางสืบค้นและกำกับแฟ้มข้อมูลตามข้อบ่งชี้</p>
+                            <p class="text-xs text-slate-400 mt-0.5">รายการข้อมูล ไฟล์เอกสาร หลักฐาน ตามตัวชี้วัด</p>
                         </div>
                         <div class="flex gap-2 w-full md:w-auto">
                             ${!isGuest ? `
@@ -951,7 +975,7 @@
 
                     <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 shadow-sm flex items-center gap-2">
                         <i data-lucide="search" class="text-slate-500 w-4 h-4 ml-2"></i>
-                        <input type="text" id="evidence-search-input" value="${searchQuery}" oninput="executeSearchFilter()" placeholder="พิมพ์สิ่งที่ต้องการค้นหาที่นี่..." class="w-full text-xs md:text-sm focus:outline-none bg-transparent text-white">
+                        <input type="text" id="evidence-search-input" value="${searchQuery}" oninput="executeSearchFilter()" placeholder="พิมพ์สิ่งที่ต้องการค้นหาที่นี่... (เช่น ชื่อไฟล์, ปีการศึกษา)" class="w-full text-xs md:text-sm focus:outline-none bg-transparent text-white">
                         ${searchQuery ? `<button onclick="clearSearchFilter()" class="text-slate-400 hover:text-slate-200 text-xs px-2">ล้าง</button>` : ''}
                     </div>
 
@@ -960,8 +984,8 @@
                             <table class="w-full text-left border-collapse text-xs md:text-sm">
                                 <thead>
                                     <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 font-medium">
-                                        <th class="p-4 w-1/3">ตัวชี้วัด / เกณฑ์ย่อย</th>
-                                        <th class="p-4 w-1/3">ชื่อไฟล์เอกสารร่องรอย</th>
+                                        <th class="p-4 w-1/3">ตัวชี้วัด</th>
+                                        <th class="p-4 w-1/3">ชื่อไฟล์เอกสาร/หลักฐาน</th>
                                         <th class="p-4 text-center">ประเภท</th>
                                         <th class="p-4 text-center">ผู้รับผิดชอบ</th>
                                         <th class="p-4 text-right">การจัดการ</th>
@@ -984,7 +1008,8 @@
                     };
                     
                     const canManage = !isGuest && (currentUser.role === 'admin' || item.created_by === currentUser.username);
-                    
+                    const yearBadgeTable = item.academic_year ? `<span class="bg-slate-800 text-indigo-400 text-[10px] px-1.5 py-0.5 rounded border border-slate-700 font-mono mr-1">ปี ${item.academic_year}</span>` : '';
+
                     html += `
                         <tr class="hover:bg-slate-800/30 transition">
                             <td class="p-4">
@@ -995,9 +1020,9 @@
                                 ${item.type === 'jpg' || item.type === 'png' ? `
                                     <div class="flex items-center gap-2">
                                         <img src="${item.source_url}" onerror="this.onerror=null; this.outerHTML='<span class=\'text-[10px] text-red-400\'>[Missing Image]</span>';" class="w-8 h-8 rounded-lg object-cover border border-slate-700">
-                                        <span class="truncate max-w-[150px]">${item.title}</span>
+                                        <span class="truncate max-w-[150px] flex items-center">${yearBadgeTable}${item.title}</span>
                                     </div>
-                                ` : `<span class="truncate max-w-[200px] block">${item.title}</span>`}
+                                ` : `<span class="truncate max-w-[200px] flex items-center">${yearBadgeTable}${item.title}</span>`}
                             </td>
                             <td class="p-4 text-center">
                                 <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold ${typeLabels[item.type] || 'bg-slate-800 text-slate-300'}">${item.type}</span>
@@ -1021,14 +1046,31 @@
                     </div>
                 </div>
 
-                <!-- FORM UPLOAD MODAL -->
                 <div id="upload-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
                     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto slide-up">
                         <div class="flex justify-between items-center pb-3 border-b border-slate-800">
                             <h3 class="text-sm font-bold text-white flex items-center gap-1.5"><i data-lucide="file-plus" class="text-indigo-400 w-4 h-4"></i> เพิ่มข้อมูลหลักฐาน</h3>
-                            <button onclick="closeUploadModal()" class="text-slate-400 hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+                            <button type="button" onclick="closeUploadModal()" class="text-slate-400 hover:text-slate-200"><i data-lucide="x" class="w-5 h-5"></i></button>
                         </div>
                         <form id="upload-form" onsubmit="handleFormSubmit(event)" class="space-y-4 mt-4 text-xs md:text-sm">
+                            
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">ปีการศึกษา</label>
+                                <select id="form-academic-year" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none text-white">
+                                    <option value="">-- เลือกปีการศึกษา --</option>
+                                    <option value="2566">ปีการศึกษา 2566</option>
+                                    <option value="2567">ปีการศึกษา 2567</option>
+                                    <option value="2568">ปีการศึกษา 2568</option>
+                                    <option value="2569">ปีการศึกษา 2569</option>
+                                    <option value="2570">ปีการศึกษา 2570</option>
+                                    <option value="2571">ปีการศึกษา 2571</option>
+                                    <option value="2572">ปีการศึกษา 2572</option>
+                                    <option value="2573">ปีการศึกษา 2573</option>
+                                    <option value="2574">ปีการศึกษา 2574</option>
+                                    <option value="2575">ปีการศึกษา 2575</option>
+                                </select>
+                            </div>
+
                             <div>
                                 <label class="block text-xs font-medium text-slate-400 mb-1">ตัวชี้วัด</label>
                                 <select id="form-indicator" required onchange="updateFormItemTypes()" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none text-white"></select>
@@ -1076,12 +1118,144 @@
             lucide.createIcons();
         }
 
+        /* 📊 ฟังก์ชันประมวลผลและวาดตารางหน้า "รายงานสรุป" ฉบับปรับปรุงตามสั่ง */
+        function renderSummaryReportPage() {
+            const yearsList = ['2566', '2567', '2568', '2569', '2570', '2571', '2572', '2573', '2574', '2575'];
+            
+            let html = `
+                <div class="space-y-6 fade-in">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4 no-print">
+                        <div>
+                            <h2 class="text-xl font-bold text-white tracking-tight">รายงานสรุปข้อมูลหลักฐานตามเกณฑ์การประเมินคุณภาพภายนอก (สมศ.)</h2>
+                            <p class="text-xs text-slate-400 mt-1">สรุปข้อมูลความพร้อมรับการประเมินคุณภาพภายนอก สมศ. แยกรายปีการศึกษา</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2 w-full md:w-auto items-center">
+                            <label class="text-xs font-medium text-slate-400 whitespace-nowrap">เลือกปีการศึกษา:</label>
+                            <select id="report-year-select" onchange="changeReportYearFilter(this.value)" class="p-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none min-w-[140px]">
+                                <option value="">-- ทั้งหมด --</option>
+                                ${yearsList.map(y => `<option value="${y}" ${selectedReportYear === y ? 'selected' : ''}>ปีการศึกษา ${y}</option>`).join('')}
+                            </select>
+                            <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2 rounded-xl font-medium transition flex items-center gap-1.5 shadow-md">
+                                <i data-lucide="printer" class="w-4 h-4"></i>พิมพ์รายงาน (A4/PDF)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl overflow-hidden print:bg-white print:p-0 print:border-none">
+                        <h3 class="print-title text-base font-bold text-slate-100 text-center mb-4 block">
+                            รายงานสรุปข้อมูลหลักฐานตามเกณฑ์การประเมินคุณภาพภายนอก (สมศ.)<br>
+                            <span class="text-xs font-normal text-slate-400 print:text-slate-700 block mt-1">
+                                ${selectedReportYear ? `ประจำปีการศึกษา ${selectedReportYear}` : 'ข้อมูลทุกปีการศึกษาที่จัดเก็บในระบบ'}
+                            </span>
+                        </h3>
+
+                        <div class="overflow-x-auto">
+                            <table class="print-table w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-slate-950 border-b border-slate-800 text-slate-300 font-bold text-center">
+                                        <th class="p-3 border border-slate-800 w-[8%] text-center">ปีการศึกษา</th>
+                                        <th class="p-3 border border-slate-800 w-[20%] text-center">มาตรฐาน</th>
+                                        <th class="p-3 border border-slate-800 w-[25%] text-center">ตัวชี้วัด</th>
+                                        <th class="p-3 border border-slate-800 w-[30%] text-center">หลักฐาน/ร่องรอย</th>
+                                        <th class="p-3 border border-slate-800 w-[7%] text-center">ประเภท</th>
+                                        <th class="p-3 border border-slate-800 w-[10%] text-center">ผู้รับผิดชอบ</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800 text-slate-300 print:text-black">
+            `;
+
+            let filterData = [...evidenceDataCache];
+            if (selectedReportYear) {
+                filterData = filterData.filter(e => e.academic_year === selectedReportYear);
+            }
+
+            let targetEvidences = filterData.filter(e => [1, 2, 3].includes(e.module_part));
+            targetEvidences.sort((a, b) => {
+                if (a.academic_year !== b.academic_year) return b.academic_year - a.academic_year;
+                if (a.module_part !== b.module_part) return a.module_part - b.module_part;
+                return a.indicator_title.localeCompare(b.indicator_title);
+            });
+
+            if (targetEvidences.length === 0) {
+                html += `<tr><td colspan="6" class="p-8 text-center text-slate-500 italic">ไม่มีข้อมูลโครงสร้างหลักฐานร่องรอยในปีการศึกษาที่ระบุ</td></tr>`;
+            } else {
+                let yearSpanMap = {};
+                let partSpanMap = {};
+                let indSpanMap = {};
+
+                targetEvidences.forEach((item) => {
+                    let yKey = item.academic_year || 'ไม่ระบุ';
+                    let pKey = yKey + '-' + item.module_part;
+                    let iKey = pKey + '-' + item.indicator_title;
+
+                    yearSpanMap[yKey] = (yearSpanMap[yKey] || 0) + 1;
+                    partSpanMap[pKey] = (partSpanMap[pKey] || 0) + 1;
+                    indSpanMap[iKey] = (indSpanMap[iKey] || 0) + 1;
+                });
+
+                let seenYear = {};
+                let seenPart = {};
+                let seenInd = {};
+
+                targetEvidences.forEach((item) => {
+                    let yKey = item.academic_year || 'ไม่ระบุ';
+                    let pKey = yKey + '-' + item.module_part;
+                    let iKey = pKey + '-' + item.indicator_title;
+
+                    html += `<tr class="hover:bg-slate-800/20 transition print:hover:bg-transparent">`;
+
+                    if (!seenYear[yKey]) {
+                        html += `<td rowspan="${yearSpanMap[yKey]}" class="p-3 border border-slate-800 text-center font-mono font-semibold bg-slate-950/20 text-slate-200 align-middle print:bg-transparent print:text-black">${yKey}</td>`;
+                        seenYear[yKey] = true;
+                    }
+
+                    if (!seenPart[pKey]) {
+                        html += `<td rowspan="${partSpanMap[pKey]}" class="p-3 border border-slate-800 font-medium text-slate-200 align-middle bg-slate-950/10 print:bg-transparent print:text-black">มาตรฐานที่ ${item.module_part}</td>`;
+                        seenPart[pKey] = true;
+                    }
+
+                    if (!seenInd[iKey]) {
+                        html += `<td rowspan="${indSpanMap[iKey]}" class="p-3 border border-slate-800 text-xs text-slate-300 align-middle print:text-black">${item.indicator_title}</td>`;
+                        seenInd[iKey] = true;
+                    }
+
+                    // เนื้อหาชื่อไฟล์เอกสาร (ชิดซ้ายปกติเพื่อความเป็นระเบียบในการอ่านชื่อยาวๆ)
+                    html += `<td class="p-3 border border-slate-800 text-slate-100 font-medium print:text-black">
+                        <a href="${item.source_url}" target="_blank" class="hover:underline text-indigo-400 hover:text-indigo-300 print:text-black print:no-underline">${item.title}</a>
+                    </td>`;
+
+                    html += `<td class="p-3 border border-slate-800 text-center uppercase font-bold text-[10px] text-slate-400 print:text-black">${item.type}</td>`;
+                    html += `<td class="p-3 border border-slate-800 text-center text-slate-400 text-xs print:text-black">${item.created_by}</td>`;
+
+                    html += `</tr>`;
+                });
+            }
+
+            html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('content-area').innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function changeReportYearFilter(yearValue) {
+            selectedReportYear = yearValue;
+            renderSummaryReportPage();
+        }
+
         function executeSearchFilter() {
             searchQuery = document.getElementById('evidence-search-input').value;
             renderModulePart(activePartKey);
             const input = document.getElementById('evidence-search-input');
-            input.focus();
-            input.setSelectionRange(input.value.length, input.value.length);
+            if(input) {
+                input.focus();
+                input.setSelectionRange(input.value.length, input.value.length);
+            }
         }
 
         function clearSearchFilter() { searchQuery = ''; renderModulePart(activePartKey); }
@@ -1090,6 +1264,7 @@
             const partMeta = modulesStructure[activePartKey];
             const modal = document.getElementById('upload-modal');
             const selectInd = document.getElementById('form-indicator');
+            if(!modal || !selectInd) return;
             
             let indHtml = '';
             Object.keys(partMeta.indicators).forEach(ind => { indHtml += `<option value="${ind}">${ind}</option>`; });
@@ -1101,15 +1276,19 @@
         }
 
         function closeUploadModal() {
-            document.getElementById('upload-modal').classList.add('hidden');
-            document.getElementById('upload-form').reset();
+            const modal = document.getElementById('upload-modal');
+            const form = document.getElementById('upload-form');
+            if(modal) modal.classList.add('hidden');
+            if(form) form.reset();
         }
 
         function updateFormItemTypes() {
             const partMeta = modulesStructure[activePartKey];
-            const selectIndValue = document.getElementById('form-indicator').value;
+            const selectInd = document.getElementById('form-indicator');
             const selectItem = document.getElementById('form-item-type');
-            let items = selectIndValue ? (partMeta.indicators[selectIndValue] || []) : (partMeta.indicators["เอกสารสำคัญ"] || []);
+            if(!selectInd || !selectItem) return;
+            
+            let items = selectInd.value ? (partMeta.indicators[selectInd.value] || []) : (partMeta.indicators["เอกสารสำคัญ"] || []);
             let itemHtml = '';
             items.forEach(it => { itemHtml += `<option value="${it}">${it}</option>`; });
             selectItem.innerHTML = itemHtml;
@@ -1134,6 +1313,8 @@
         async function handleFormSubmit(e) {
             e.preventDefault();
             const partNum = parseInt(activePartKey.replace('part', ''));
+            
+            const academicYear = document.getElementById('form-academic-year').value;
             const indTitle = document.getElementById('form-indicator').value;
             const itemType = document.getElementById('form-item-type').value;
             const title = document.getElementById('form-title').value.trim();
@@ -1147,7 +1328,7 @@
                     finalSourceUrl = document.getElementById('form-source-url').value.trim();
                 } else {
                     const fileInput = document.getElementById('form-file-input');
-                    const rawFile = fileInput.files[0];
+                    const rawFile = fileInput ? fileInput.files[0] : null;
                     if (!rawFile) throw new Error("กรุณาเลือกไฟล์เอกสารหรือรูปภาพแนบระบบ");
 
                     let uploadedBlob = rawFile;
@@ -1176,10 +1357,14 @@
                         title: title,
                         type: type,
                         source_url: finalSourceUrl,
-                        created_by: currentUser.username
+                        created_by: currentUser.username,
+                        academic_year: academicYear
                     }]);
 
-                if (dbErr) throw dbErr;
+                if (dbErr) {
+                    console.error("Supabase Database Error Details:", dbErr);
+                    throw new Error(dbErr.message);
+                }
 
                 showToast("บันทึกสารสนเทศร่องรอยสำเร็จ", "success");
                 closeUploadModal();
@@ -1187,6 +1372,7 @@
                 renderModulePart(activePartKey);
 
             } catch (err) {
+                console.error("Form Submit General Error:", err);
                 showToast(err.message || "เกิดอุปสรรคข้อผิดพลาดในการอัปโหลด", "danger");
             } finally {
                 toggleLoader(false);
