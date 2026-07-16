@@ -1113,19 +1113,19 @@
                                 <input type="text" id="form-title" required placeholder="พิมพ์ระบุชื่อชิ้นงานหลักฐานหลัก..." class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none text-white">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1">รูปแบบการจัดเก็บ</label>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">ที่มา/ประเภทไฟล์</label>
                                 <select id="form-type" required onchange="toggleFormUploadSource()" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none text-white">
-                                    <option value="url">ลิงก์ภายนอกอินเทอร์เน็ต (URL)</option>
-                                    <option value="drive">แชร์ลิงก์ Google Drive</option>
+                                    <option value="url">ลิงค์อินเทอร์เน็ต (URL)</option>
+                                    <option value="drive">ลิงค์ Google Drive</option>
                                     <option value="doc">ไฟล์ Microsoft Word (doc/docx)</option>
-                                    <option value="pdf">ไฟล์เอกสารรูปเล่ม PDF</option>
-                                    <option value="jpg">รูปภาพหลักฐานสแกน (jpg)</option>
-                                    <option value="png">รูปภาพหลักฐานสแกน (png)</option>
+                                    <option value="pdf">ไฟล์เอกสาร PDF</option>
+                                    <option value="jpg">ไฟล์รูปภาพ JPG</option>
+                                    <option value="png">ไฟล์รูปภาพ PNG</option>
                                 </select>
                             </div>
                             
                             <div id="src-link-wrapper">
-                                <label class="block text-xs font-medium text-slate-400 mb-1">วางลิงค์ปลายทาง (URL)</label>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">วางลิงค์ (URL)</label>
                                 <input type="url" id="form-source-url" placeholder="https://..." class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none text-white">
                             </div>
 
@@ -1543,7 +1543,7 @@
                             .from('qa_bucket')
                             .getPublicUrl(`evidences/${uniqueFileName}`);
                             
-                        if (!publicUrlData || !publicUrlData.publicUrl) throw new Error("เกิดความผิดพลาดในการสร้างลิงก์ไฟล์บนคลาวด์");
+                        if (!publicUrlData || !publicUrlData.publicUrl) throw new Error("เกิดความผิดพลาดในการสร้างลิงค์ไฟล์บนคลาวด์");
                         finalSourceUrl = publicUrlData.publicUrl;
                     }
                 }
