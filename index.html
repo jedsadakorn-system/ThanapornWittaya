@@ -1514,17 +1514,26 @@
                         if (['jpg', 'png'].includes(type)) {
                             uploadedBlob = await compressImage(rawFile);
                         }
-                        
-                        const fileExt = rawFile.name.split('.').pop();
-                        const uniqueFileName = `${Date.now()}_${Math.floor(Math.random() * 1000)}.${fileExt}`;
-                        
+
+                        // ชื่อไฟล์เดิมอาจเป็นภาษาไทย (เช่น .docx, .pdf) ซึ่งทำให้ Supabase Storage
+                        // อัปโหลดไม่สำเร็จ (เบราว์เซอร์/ไลบรารีบางตัวไม่รองรับอักขระที่ไม่ใช่ ASCII
+                        // ใน header ของไฟล์ที่อัปโหลด) จึงต้องสร้างชื่อไฟล์ใหม่เป็นภาษาอังกฤษ
+                        // ขึ้นต้นด้วย "QA" เสมอ ก่อนส่งไฟล์จริง (uploadedBlob) ไปที่ Supabase
+                        const fileExt = (rawFile.name.split('.').pop() || '').toLowerCase();
+                        const uniqueFileName = `QA_${Date.now()}_${Math.floor(Math.random() * 1000)}.${fileExt}`;
+
+                        // ห่อไฟล์เดิมด้วยชื่อไฟล์ใหม่ที่ปลอดภัย (คง type/เนื้อหาไฟล์เดิมไว้ทั้งหมด)
+                        uploadedBlob = new File([uploadedBlob], uniqueFileName, {
+                            type: uploadedBlob.type || rawFile.type || 'application/octet-stream'
+                        });
+
                         const { data: uploadData, error: uploadErr } = await clientAppSb
-                            .withTenant()
                             .storage
                             .from('qa_bucket')
                             .upload(`evidences/${uniqueFileName}`, uploadedBlob, {
                                 cacheControl: '3600',
-                                uppercase: false
+                                contentType: uploadedBlob.type,
+                                upsert: false
                             });
                             
                         if (uploadErr) throw uploadErr;
